@@ -65,6 +65,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'de.greenrobot:greendao:2.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.2.0'
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
 }
