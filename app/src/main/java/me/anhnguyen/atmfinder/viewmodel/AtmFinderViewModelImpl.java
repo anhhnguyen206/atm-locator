@@ -24,7 +24,9 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     private BehaviorSubject<Double> lat = BehaviorSubject.create();
     private BehaviorSubject<Double> lon = BehaviorSubject.create();
     private BehaviorSubject<String> searchText = BehaviorSubject.create("");
-    private BehaviorSubject<Double> searchRange = BehaviorSubject.create(Double.MAX_VALUE);
+
+    // default search range to be 2000 m
+    private BehaviorSubject<Double> searchRange = BehaviorSubject.create(Double.valueOf(2000));
 
     private FindAtmInteractor findAtmInteractor;
     private Scheduler schedulerIo;
@@ -55,9 +57,30 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
+    public BehaviorSubject<Double> searchLat() {
+        return lat;
+    }
+
+    @Override
+    public BehaviorSubject<Double> searchLon() {
+        return lon;
+    }
+
+    @Override
+    public BehaviorSubject<Double> searchRange() {
+        return searchRange;
+    }
+
+    @Override
+    public BehaviorSubject<String> searchText() {
+        return searchText;
+    }
+
+    @Override
     public void search() {
         loading.onNext(Boolean.TRUE);
-        findAtmInteractor.execute(searchText.getValue(), searchRange.getValue(), lat.getValue(), lon.getValue())
+
+        findAtmInteractor.execute(searchText.getValue(), lat.getValue(), lon.getValue(), searchRange.getValue())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(
@@ -70,21 +93,5 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
                             this.loading.onNext(Boolean.FALSE);
                         }
                 );
-    }
-
-    @Override
-    public void searchCenter(double lat, double lon) {
-        this.lat.onNext(lat);
-        this.lon.onNext(lon);
-    }
-
-    @Override
-    public void searchRange(double range) {
-        this.searchRange.onNext(range);
-    }
-
-    @Override
-    public void searchText(String searchText) {
-        this.searchText.onNext(searchText);
     }
 }

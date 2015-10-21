@@ -46,6 +46,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     @Bind(R.id.spinner_range)
     Spinner rangeSpinner;
     AtmRangeAdapter atmRangeAdapter;
+    @Bind(R.id.add_atm_fab)
+    FloatingActionButton addAtmFab;
 
     @Inject
     AtmFinderViewModel atmFinderViewModel;
@@ -61,8 +63,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_atm_finder);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        addAtmFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
 
         showProgress(getString(R.string.loading));
@@ -92,12 +93,12 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
         // bind search text
         RxTextView.textChanges(searchEditText)
-                .subscribe(charSequence -> atmFinderViewModel.searchText(charSequence.toString()));
+                .subscribe(charSequence -> atmFinderViewModel.searchText().onNext(charSequence.toString()));
 
         rangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                atmFinderViewModel.searchRange(atmRangeAdapter.getItem(position).getRange());
+                atmFinderViewModel.searchRange().onNext(atmRangeAdapter.getItem(position).getRange());
             }
 
             @Override
@@ -142,7 +143,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        atmFinderViewModel.searchCenter(cameraPosition.target.latitude,
-                cameraPosition.target.longitude);
+        atmFinderViewModel.searchLat().onNext(cameraPosition.target.latitude);
+        atmFinderViewModel.searchLon().onNext(cameraPosition.target.longitude);
     }
 }

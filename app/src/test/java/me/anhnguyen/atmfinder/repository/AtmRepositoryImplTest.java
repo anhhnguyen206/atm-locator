@@ -11,6 +11,7 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import me.anhnguyen.atmfinder.AtmRepositoryTestHelper;
 import me.anhnguyen.atmfinder.BuildConfig;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
@@ -27,6 +28,7 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
     public void setUp() throws Exception {
         super.setUp();
         atmRepository = new AtmRepositoryImpl(this.dao);
+        createAtmListNearbySearch();
     }
 
     public AtmRepositoryImplTest() {
@@ -42,10 +44,9 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
     public void atmShouldBeCreated() {
         Atm atm = createAtmForInsertion();
 
-        atmRepository.insert(atm);
+        Atm newlyInserted = atmRepository.insert(atm);
 
-        Atm newlyInserted = dao.load(1l);
-        assertNotNull(dao.load(1l));
+        assertNotNull(dao.load(newlyInserted.getId()));
         assertEquals("Vietcombank chi nhánh Quang Trung Gò Vấp", newlyInserted.getName());
         assertEquals("49 Quang Trung, 10, Gò Vấp, Hồ Chí Minh, Vietnam", newlyInserted.getAddress());
         assertEquals(10.8272542, newlyInserted.getLat());
@@ -54,8 +55,6 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
 
     @Test
     public void atmNearbyShouldBeFoundWithIn5KM() {
-        createAtmListNearbySearch();
-
         // at Nguyen Oanh Go Vap
         double currentLat = 10.8470016;
         double currentLon = 106.6743678;
@@ -69,13 +68,11 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
 
     @Test
     public void atmNearbyShouldBeFoundWithIn10km() {
-        createAtmListNearbySearch();
-
         // at Nguyen Oanh Go Vap
         double currentLat = 10.8470016;
         double currentLon = 106.6743678;
 
-        // approximately 5 km center
+        // approximately 10 km center
         List<Atm> nearbyAtms = atmRepository.findNearbyAtms("", currentLat, currentLon, 10000);
         assertEquals(3, nearbyAtms.size());
         assertEquals(Long.valueOf(1l), nearbyAtms.get(0).getId());
@@ -85,8 +82,6 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
 
     @Test
     public void atmNearbyWithNameContainsVietcombankShouldBeFoundWithIn5km() {
-        createAtmListNearbySearch();
-
         // at Nguyen Oanh Go Vap
         double currentLat = 10.8470016;
         double currentLon = 106.6743678;
@@ -97,35 +92,25 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
         assertEquals(Long.valueOf(1l), nearbyAtms.get(0).getId());
     }
 
+    @Test
+    public void atmNearbyWithNameThatNotExistShouldNotBeFound() {
+        // at Nguyen Oanh Go Vap
+        double currentLat = 10.8470016;
+        double currentLon = 106.6743678;
+
+        // approximately 5 km center
+        List<Atm> nearbyAtms = atmRepository.findNearbyAtms("NonExisting ATM", currentLat, currentLon, 5000);
+        assertEquals(0, nearbyAtms.size());
+    }
+
     private void createAtmListNearbySearch() {
-        Atm atm = createEntity(1l);
-        atm.setName("Vietcombank chi nhánh Quang Trung Gò Vấp");
-        atm.setAddress("49 Quang Trung, 10, Gò Vấp, Hồ Chí Minh, Vietnam");
-        atm.setLat(10.8389326);
-        atm.setLon(106.661651);
-
-        dao.insert(atm);
-
-        atm = createEntity(2l);
-        atm.setName("Citibank Võ Văn Tần");
-        atm.setAddress("34-34A, Võ Văn Tần, phường 6, Hồ Chí Minh, Vietnam");
-        atm.setLat(10.778656);
-        atm.setLon(106.6221091);
-
-        dao.insert(atm);
-
-        atm = createEntity(3l);
-        atm.setName("Dong A Bank Hà Huy Giáp");
-        atm.setAddress("540 Hà Huy Giáp, Thạnh Lộc, 12, Hồ Chí Minh, Vietnam");
-        atm.setLat(10.877963);
-        atm.setLon(106.6776794);
-
-        dao.insert(atm);
+        AtmRepositoryTestHelper atmRepositoryTestHelper = new AtmRepositoryTestHelper(dao);
+        atmRepositoryTestHelper.createAtmListNearbySearch();
     }
 
     @NonNull
     private Atm createAtmForInsertion() {
-        Atm atm = createEntity(1l);
+        Atm atm = new Atm();
         atm.setName("Vietcombank chi nhánh Quang Trung Gò Vấp");
         atm.setAddress("49 Quang Trung, 10, Gò Vấp, Hồ Chí Minh, Vietnam");
         atm.setLat(10.8272542);

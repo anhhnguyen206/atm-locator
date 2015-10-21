@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.dao.query.QueryBuilder;
+import me.anhnguyen.atmfinder.common.Constants;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
 
@@ -15,7 +16,7 @@ import me.anhnguyen.atmfinder.model.dao.AtmDao;
  */
 public class AtmRepositoryImpl implements AtmRepository {
     AtmDao atmDao;
-    final double earthRadius = 6371000; // m
+    final double earthRadius = Constants.EARTH_RADIUS; // m
     final double mult = 1.1;
 
     @Inject
