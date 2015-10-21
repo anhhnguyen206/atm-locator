@@ -8,6 +8,7 @@ public class Atm {
 
     private Long id;
     private String name;
+    private String address;
     private Double lat;
     private Double lon;
 
@@ -18,9 +19,10 @@ public class Atm {
         this.id = id;
     }
 
-    public Atm(Long id, String name, Double lat, Double lon) {
+    public Atm(Long id, String name, String address, Double lat, Double lon) {
         this.id = id;
         this.name = name;
+        this.address = address;
         this.lat = lat;
         this.lon = lon;
     }
@@ -39,6 +41,14 @@ public class Atm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Double getLat() {

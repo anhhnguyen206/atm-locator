@@ -25,8 +25,9 @@ public class AtmDao extends AbstractDao<Atm, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Lat = new Property(2, Double.class, "lat", false, "LAT");
-        public final static Property Lon = new Property(3, Double.class, "lon", false, "LON");
+        public final static Property Address = new Property(2, String.class, "address", false, "ADDRESS");
+        public final static Property Lat = new Property(3, Double.class, "lat", false, "LAT");
+        public final static Property Lon = new Property(4, Double.class, "lon", false, "LON");
     };
 
 
@@ -44,8 +45,9 @@ public class AtmDao extends AbstractDao<Atm, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"ATM\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"NAME\" TEXT," + // 1: name
-                "\"LAT\" REAL," + // 2: lat
-                "\"LON\" REAL);"); // 3: lon
+                "\"ADDRESS\" TEXT," + // 2: address
+                "\"LAT\" REAL," + // 3: lat
+                "\"LON\" REAL);"); // 4: lon
     }
 
     /** Drops the underlying database table. */
@@ -69,14 +71,19 @@ public class AtmDao extends AbstractDao<Atm, Long> {
             stmt.bindString(2, name);
         }
  
+        String address = entity.getAddress();
+        if (address != null) {
+            stmt.bindString(3, address);
+        }
+ 
         Double lat = entity.getLat();
         if (lat != null) {
-            stmt.bindDouble(3, lat);
+            stmt.bindDouble(4, lat);
         }
  
         Double lon = entity.getLon();
         if (lon != null) {
-            stmt.bindDouble(4, lon);
+            stmt.bindDouble(5, lon);
         }
     }
 
@@ -92,8 +99,9 @@ public class AtmDao extends AbstractDao<Atm, Long> {
         Atm entity = new Atm( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
-            cursor.isNull(offset + 2) ? null : cursor.getDouble(offset + 2), // lat
-            cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3) // lon
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // address
+            cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3), // lat
+            cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4) // lon
         );
         return entity;
     }
@@ -103,8 +111,9 @@ public class AtmDao extends AbstractDao<Atm, Long> {
     public void readEntity(Cursor cursor, Atm entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setLat(cursor.isNull(offset + 2) ? null : cursor.getDouble(offset + 2));
-        entity.setLon(cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3));
+        entity.setAddress(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setLat(cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3));
+        entity.setLon(cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4));
      }
     
     /** @inheritdoc */
