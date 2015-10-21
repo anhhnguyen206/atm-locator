@@ -13,5 +13,5 @@
         android:paddingRight="12dp"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/smal_text_size"
-        android:background="@android:color/white"/>
+        android:background="@color/cardview_light_background"/>
 </LinearLayout>

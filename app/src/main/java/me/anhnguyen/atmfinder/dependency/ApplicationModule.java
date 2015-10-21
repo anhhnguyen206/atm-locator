@@ -10,6 +10,9 @@ import me.anhnguyen.atmfinder.dependency.annotation.ForApplication;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
 import me.anhnguyen.atmfinder.model.dao.DaoMaster;
 import me.anhnguyen.atmfinder.model.dao.DaoSession;
+import me.anhnguyen.atmfinder.repository.AtmRepository;
+import me.anhnguyen.atmfinder.repository.AtmRepositoryImpl;
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 
 /**
  * Created by nguyenhoanganh on 10/18/15.
@@ -45,5 +48,17 @@ public class ApplicationModule {
     @Singleton
     AtmDao provideAtmDao(DaoSession daoSession) {
         return daoSession.getAtmDao();
+    }
+
+    @Provides
+    @Singleton
+    AtmRepository provideAtmRepository(AtmRepositoryImpl atmRepository) {
+        return atmRepository;
+    }
+
+    @Provides
+    @Singleton
+    ReactiveLocationProvider provideReactiveLocationProvider() {
+        return new ReactiveLocationProvider(context);
     }
 }

@@ -1,8 +1,8 @@
 package me.anhnguyen.atmfinder.view;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Scheduler;
 
@@ -52,6 +55,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     @Inject
     AtmFinderViewModel atmFinderViewModel;
     @Inject
+    ReactiveLocationProvider reactiveLocationProvider;
+    @Inject
     @ForSchedulerIo
     Scheduler schedulerIo;
     @Inject
@@ -63,9 +68,12 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_atm_finder);
 
-        addAtmFab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        RxPermissions.getInstance(this)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(permission -> init());
+    }
 
+    private void init() {
         showProgress(getString(R.string.loading));
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -74,8 +82,6 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
         atmRangeAdapter = new AtmRangeAdapter(this);
         rangeSpinner.setAdapter(atmRangeAdapter);
-
-        bindViewModel();
     }
 
     private void bindViewModel() {
@@ -135,10 +141,25 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
         map = googleMap;
 
+        bindViewModel();
+
         map.setMyLocationEnabled(true);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setOnCameraChangeListener(this);
-        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(map.getMyLocation().getLatitude(),
-                map.getMyLocation().getLongitude())));
+
+        if (RxPermissions.getInstance(this).isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            LocationRequest request = LocationRequest.create() //standard GMS LocationRequest
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setNumUpdates(1)
+                    .setInterval(100);
+
+            reactiveLocationProvider.getUpdatedLocation(request)
+                    .subscribeOn(schedulerIo)
+                    .observeOn(schedulerUi)
+                    .subscribe(location -> {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                    });
+        }
     }
 
     @Override

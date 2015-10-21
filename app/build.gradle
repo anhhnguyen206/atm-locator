@@ -68,4 +68,5 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding:0.2.0'
     compile 'com.squareup.dagger:dagger:1.2.2'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.3.0@aar'
 }

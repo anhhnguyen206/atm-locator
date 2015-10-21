@@ -21,6 +21,7 @@ import rx.schedulers.Schedulers;
 @Module(
         injects = AtmFinderActivitiy.class,
         addsTo = ApplicationModule.class,
+        includes = ViewModelModule.class,
         library = true,
         complete = false
 )

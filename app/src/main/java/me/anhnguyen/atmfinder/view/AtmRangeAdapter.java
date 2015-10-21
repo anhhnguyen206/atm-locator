@@ -40,12 +40,12 @@ public class AtmRangeAdapter extends ArrayAdapter<AtmRange> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+        return getCustomView(position, convertView, parent);
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return super.getDropDownView(position, convertView, parent);
+        return getCustomView(position, convertView, parent);
     }
 
     private View getCustomView(int position, View convertView, ViewGroup parent) {

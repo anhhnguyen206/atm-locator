@@ -18,7 +18,7 @@
             android:orientation="horizontal">
             <Spinner
                 android:id="@+id/spinner_range"
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent">
             </Spinner>
             <EditText
@@ -44,7 +44,8 @@
                     android:padding="@dimen/medium_margin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:indeterminate="true"/>
+                    android:indeterminate="true"
+                    android:visibility="gone"/>
             </FrameLayout>
 
         </LinearLayout>
