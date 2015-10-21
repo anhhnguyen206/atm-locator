@@ -20,8 +20,11 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     private BehaviorSubject<List<Atm>> atms = BehaviorSubject.create(Collections.<Atm>emptyList());
     private BehaviorSubject<Boolean> loading = BehaviorSubject.create(Boolean.FALSE);
     private BehaviorSubject<Throwable> error = BehaviorSubject.create();
+
     private BehaviorSubject<Double> lat = BehaviorSubject.create();
     private BehaviorSubject<Double> lon = BehaviorSubject.create();
+    private BehaviorSubject<String> searchText = BehaviorSubject.create("");
+    private BehaviorSubject<Double> searchRange = BehaviorSubject.create(Double.MAX_VALUE);
 
     private FindAtmInteractor findAtmInteractor;
     private Scheduler schedulerIo;
@@ -52,20 +55,36 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
-    public void search(String name, double range) {
+    public void search() {
         loading.onNext(Boolean.TRUE);
-        findAtmInteractor.execute(name, range, lat.getValue(), lon.getValue())
+        findAtmInteractor.execute(searchText.getValue(), searchRange.getValue(), lat.getValue(), lon.getValue())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(
-                        atms -> this.atms.onNext(atms),
-                        throwable -> this.error.onNext(throwable),
-                        () -> this.loading.onNext(Boolean.FALSE));
+                        atms -> {
+                            this.atms.onNext(atms);
+                            this.loading.onNext(Boolean.FALSE);
+                        },
+                        throwable -> {
+                            this.error.onNext(throwable);
+                            this.loading.onNext(Boolean.FALSE);
+                        }
+                );
     }
 
     @Override
-    public void searchCenterLocation(double lat, double lon) {
+    public void searchCenter(double lat, double lon) {
         this.lat.onNext(lat);
         this.lon.onNext(lon);
+    }
+
+    @Override
+    public void searchRange(double range) {
+        this.searchRange.onNext(range);
+    }
+
+    @Override
+    public void searchText(String searchText) {
+        this.searchText.onNext(searchText);
     }
 }

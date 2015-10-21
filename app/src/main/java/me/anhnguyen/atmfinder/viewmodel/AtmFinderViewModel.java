@@ -12,6 +12,8 @@ public interface AtmFinderViewModel {
     Observable<List<Atm>> atms();
     Observable<Boolean> loading();
     Observable<String> error();
-    void search(String name, double range);
-    void searchCenterLocation(double lat, double lon);
+    void search();
+    void searchCenter(double lat, double lon);
+    void searchRange(double range);
+    void searchText(String searchText);
 }
