@@ -158,9 +158,6 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         hideProgress();
         map = googleMap;
-        map.setMyLocationEnabled(true);
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-
         bindViewModel();
         getCurrentLocationAndMoveMap();
     }
@@ -177,6 +174,10 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
                     });
         } else {
             requestLocationPermission();
+            LatLng latLng = LocationUtils.defaultLatLng();
+            atmFinderViewModel.searchLat().onNext(latLng.latitude);
+            atmFinderViewModel.searchLon().onNext(latLng.longitude);
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
         }
     }
 }

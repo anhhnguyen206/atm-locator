@@ -3,6 +3,7 @@ package me.anhnguyen.atmfinder.common;
 import android.location.Address;
 
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by nguyenhoanganh on 10/22/15.
@@ -44,5 +45,11 @@ public class LocationUtils {
                 .setNumUpdates(1)
                 .setInterval(100);
         return request;
+    }
+
+    // return default lat lng in case
+    // we don't have location
+    public static LatLng defaultLatLng() {
+        return new LatLng(10.7725563, 106.6958022);
     }
 }
