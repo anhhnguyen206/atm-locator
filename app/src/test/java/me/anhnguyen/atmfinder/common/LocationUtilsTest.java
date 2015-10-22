@@ -3,6 +3,7 @@ package me.anhnguyen.atmfinder.common;
 import android.location.Address;
 
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -199,5 +200,13 @@ public class LocationUtilsTest {
         assertEquals(LocationRequest.PRIORITY_HIGH_ACCURACY, locationRequest.getPriority());
         assertEquals(1, locationRequest.getNumUpdates());
         assertEquals(100, locationRequest.getInterval());
+    }
+
+    @Test
+    public void defaultLatLngShouldReturnBenThanhMarket() throws Exception {
+        LatLng latLng = LocationUtils.defaultLatLng();
+        //10.7725563,106.6958022
+        assertEquals(Double.valueOf(10.7725563), Double.valueOf(latLng.latitude));
+        assertEquals(Double.valueOf(106.6958022), Double.valueOf(latLng.longitude));
     }
 }
