@@ -26,6 +26,8 @@ public class AtmRangeAdapter extends ArrayAdapter<AtmRange> {
         ranges.add(new AtmRange("2 km", 2000));
         ranges.add(new AtmRange("5 km", 5000));
         ranges.add(new AtmRange("10 km", 10000));
+        ranges.add(new AtmRange("15 km", 15000));
+        ranges.add(new AtmRange("20 km", 20000));
     }
 
     @Override

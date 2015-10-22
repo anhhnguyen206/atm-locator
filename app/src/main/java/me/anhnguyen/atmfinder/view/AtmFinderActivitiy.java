@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -36,7 +38,7 @@ import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Scheduler;
 
-public class AtmFinderActivitiy extends InjectableActivity implements OnMapReadyCallback {
+public class AtmFinderActivitiy extends InjectableActivity implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
     private GoogleMap map;
     private LatLngBounds.Builder latLngBoundsBuilder = new LatLngBounds.Builder();
 
@@ -46,6 +48,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     ImageView searchImageView;
     @Bind(R.id.edit_text_search_text)
     EditText searchEditText;
+    @Bind(R.id.edit_text_address)
+    TextView editTextAddress;
     @Bind(R.id.spinner_range)
     Spinner rangeSpinner;
     AtmRangeAdapter atmRangeAdapter;
@@ -69,9 +73,6 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_atm_finder);
-
-        requestLocationPermission();
-
         init();
     }
 
@@ -146,6 +147,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         markerOptions.flat(true);
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker));
         markerOptions.position(new LatLng(atm.getLat(), atm.getLon()));
+        markerOptions.title(atm.getName());
+        markerOptions.snippet(atm.getAddress());
         return map.addMarker(markerOptions);
     }
 
@@ -158,6 +161,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         hideProgress();
         map = googleMap;
+        map.setOnCameraChangeListener(this);
         bindViewModel();
         getCurrentLocationAndMoveMap();
     }
@@ -173,11 +177,33 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     });
         } else {
-            requestLocationPermission();
-            LatLng latLng = LocationUtils.defaultLatLng();
-            atmFinderViewModel.searchLat().onNext(latLng.latitude);
-            atmFinderViewModel.searchLon().onNext(latLng.longitude);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            requestLocationPermission()
+                    .subscribe(permission -> {
+                        if (permission.granted) {
+                            getCurrentLocationAndMoveMap();
+                        } else {
+                            showToast("Location permission is not granted. Using default location.");
+                            LatLng latLng = LocationUtils.defaultLatLng();
+                            atmFinderViewModel.searchLat().onNext(latLng.latitude);
+                            atmFinderViewModel.searchLon().onNext(latLng.longitude);
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                        }
+                    });
         }
+    }
+
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        atmFinderViewModel.searchLat().onNext(cameraPosition.target.latitude);
+        atmFinderViewModel.searchLon().onNext(cameraPosition.target.longitude);
+
+        reactiveLocationProvider
+                .getReverseGeocodeObservable(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
+                .filter(addresses -> addresses.size() > 0)
+                .subscribeOn(schedulerIo)
+                .observeOn(schedulerUi)
+                .subscribe(addresses -> {
+                    editTextAddress.setText(LocationUtils.addressAsString(addresses.get(0)));
+                });
     }
 }

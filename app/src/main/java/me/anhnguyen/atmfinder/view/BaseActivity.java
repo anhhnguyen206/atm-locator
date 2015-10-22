@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.tbruyelle.rxpermissions.Permission;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.anhnguyen.atmfinder.R;
+import rx.Observable;
 
 /**
  * Created by nguyenhoanganh on 10/18/15.
@@ -102,10 +104,9 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         return toolbar;
     }
 
-    protected void requestLocationPermission() {
-        RxPermissions.getInstance(this)
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe();
+    protected Observable<Permission> requestLocationPermission() {
+        return RxPermissions.getInstance(this)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     protected boolean locationPermissionGranted() {

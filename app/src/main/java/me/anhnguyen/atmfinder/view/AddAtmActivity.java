@@ -1,6 +1,5 @@
 package me.anhnguyen.atmfinder.view;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
@@ -75,16 +73,33 @@ public class AddAtmActivity extends InjectableActivity implements OnMapReadyCall
         map.setMyLocationEnabled(false);
         map.setOnCameraChangeListener(this);
 
-        if (RxPermissions.getInstance(this).isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
-                    .subscribeOn(schedulerIo)
-                    .observeOn(schedulerUi)
-                    .subscribe(location -> {
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+        if (locationPermissionGranted()) {
+            getCurrentLocationAndMoveMap();
+        } else {
+            requestLocationPermission()
+                    .subscribe(permission -> {
+                        if (permission.granted) {
+                            getCurrentLocationAndMoveMap();
+                        } else {
+                            showToast("Location permission is not granted. Using default location.");
+                            LatLng latLng = LocationUtils.defaultLatLng();
+                            addAtmViewModel.setLat(latLng.latitude);
+                            addAtmViewModel.setLon(latLng.longitude);
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                        }
                     });
         }
 
         bindViewModel();
+    }
+
+    private void getCurrentLocationAndMoveMap() {
+        reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
+                .subscribeOn(schedulerIo)
+                .observeOn(schedulerUi)
+                .subscribe(location -> {
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                });
     }
 
     private void bindViewModel() {
