@@ -19,7 +19,8 @@
         <activity
             android:name=".view.AtmFinderActivitiy"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,6 +39,16 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".view.AddAtmActivity"
+            android:label="@string/title_activity_add_atm"
+            android:parentActivityName=".view.AtmFinderActivitiy"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.anhnguyen.atmfinder.view.AtmFinderActivitiy" />
+        </activity>
     </application>
 
 </manifest>
