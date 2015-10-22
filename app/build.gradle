@@ -46,10 +46,12 @@ def coverageSourceDirs = [
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
+
     reports {
         xml.enabled = true
         html.enabled = true
     }
+
     classDirectories = fileTree(
             dir: './build/intermediates/classes/debug',
             includes: ['me/anhnguyen/atmfinder/common/*.class',
@@ -64,13 +66,26 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
             ])
     sourceDirectories = files(coverageSourceDirs)
     executionData = files("$buildDir/jacoco/testDebugUnitTest.exec")
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
+
+    def renamedFilesMap = [:]
+
+    // Hacky fix for issue: https://code.google.com/p/android/issues/detail?id=69174.
+    // Rename files with '$$' before generating report, and then rename back after
     doFirst {
-        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
+        new File('app/build/intermediates/classes/debug').eachFileRecurse { file ->
             if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
+                def oldPath = file.path
+                def newPath = oldPath.replace('$$', '$')
+                file.renameTo(newPath)
+                renamedFilesMap[newPath] = oldPath
             }
+        }
+    }
+
+    doLast {
+        renamedFilesMap.each() {
+            newPath, oldPath ->
+                new File(newPath).renameTo(oldPath)
         }
     }
 }

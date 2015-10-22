@@ -10,6 +10,8 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
+import static org.junit.Assert.*;
+
 /**
  * Created by nguyenhoanganh on 10/22/15.
  */
@@ -121,5 +123,26 @@ public class AddAtmViewModelImplTest {
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
         testSubscriber.assertValues("Test");
+    }
+
+    @Test
+    public void doneShouldEmitInsertedAtm() {
+        Mockito.when(addAtmInteractor.execute("Vietcombank", "Vietcombank", 10.68588, 107.59394))
+                .thenReturn(Observable.just(new Atm(1l, "Vietcombank", "Vietcombank", 10.68588, 107.59394)));
+
+        TestSubscriber<Atm> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.done().subscribe(testSubscriber);
+        addAtmViewModelImpl.setName("Vietcombank");
+        addAtmViewModelImpl.setAddress("Vietcombank");
+        addAtmViewModelImpl.setLat(10.68588);
+        addAtmViewModelImpl.setLon(107.59394);
+        addAtmViewModelImpl.add();
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+        Atm actual = testSubscriber.getOnNextEvents().get(0);
+        assertEquals("Vietcombank", actual.getName());
+        assertEquals("Vietcombank", actual.getAddress());
+        assertEquals(Double.valueOf(10.68588), actual.getLat());
+        assertEquals(Double.valueOf(107.59394), actual.getLon());
     }
 }
