@@ -1,6 +1,5 @@
 package me.anhnguyen.atmfinder.view;
 
-import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
@@ -72,9 +70,9 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_atm_finder);
 
-        RxPermissions.getInstance(this)
-                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(permission -> init());
+        requestLocationPermission();
+
+        init();
     }
 
     private void init() {
@@ -168,7 +166,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     }
 
     private void getCurrentLocationAndMoveMap() {
-        if (RxPermissions.getInstance(this).isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (locationPermissionGranted()) {
             reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
@@ -177,6 +175,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
                         atmFinderViewModel.searchLon().onNext(location.getLongitude());
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     });
+        } else {
+            requestLocationPermission();
         }
     }
 }

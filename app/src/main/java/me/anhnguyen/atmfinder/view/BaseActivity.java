@@ -1,11 +1,14 @@
 package me.anhnguyen.atmfinder.view;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -97,5 +100,15 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     @Nullable
     public Toolbar getToolbar() {
         return toolbar;
+    }
+
+    protected void requestLocationPermission() {
+        RxPermissions.getInstance(this)
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe();
+    }
+
+    protected boolean locationPermissionGranted() {
+        return RxPermissions.getInstance(this).isGranted(Manifest.permission.ACCESS_FINE_LOCATION);
     }
 }
