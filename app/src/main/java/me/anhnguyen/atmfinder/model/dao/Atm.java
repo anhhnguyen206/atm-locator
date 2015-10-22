@@ -67,4 +67,30 @@ public class Atm {
         this.lon = lon;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Atm)) return false;
+
+        Atm atm = (Atm) o;
+
+        if (getId() != null ? !getId().equals(atm.getId()) : atm.getId() != null) return false;
+        if (getName() != null ? !getName().equals(atm.getName()) : atm.getName() != null)
+            return false;
+        if (getAddress() != null ? !getAddress().equals(atm.getAddress()) : atm.getAddress() != null)
+            return false;
+        if (getLat() != null ? !getLat().equals(atm.getLat()) : atm.getLat() != null) return false;
+        return !(getLon() != null ? !getLon().equals(atm.getLon()) : atm.getLon() != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        result = 31 * result + (getAddress() != null ? getAddress().hashCode() : 0);
+        result = 31 * result + (getLat() != null ? getLat().hashCode() : 0);
+        result = 31 * result + (getLon() != null ? getLon().hashCode() : 0);
+        return result;
+    }
 }

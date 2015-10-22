@@ -21,6 +21,14 @@ public class AddAtmInteractorImpl implements AddAtmInteractor {
     public Observable<Atm> execute(String name, String address, double lat, double lon) {
         return Observable.create(subscriber -> {
             try {
+                if (name.isEmpty()) {
+                    throw new Exception("Name cannot be empty");
+                }
+
+                if (address.isEmpty()) {
+                    throw new Exception("Address cannot be empty");
+                }
+
                 Atm atm = new Atm();
                 atm.setName(name);
                 atm.setAddress(address);
