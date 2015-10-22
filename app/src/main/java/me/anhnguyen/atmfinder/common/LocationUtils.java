@@ -11,7 +11,6 @@ public class LocationUtils {
     public static String addressAsString(Address address) {
         String addressString = "";
         if (address.getMaxAddressLineIndex() > 0) {
-
             addressString += address.getAddressLine(0) != null && address.getAddressLine(0).length() > 0 ?
                     address.getAddressLine(0) + ", " : "";
         }
@@ -30,6 +29,10 @@ public class LocationUtils {
 
         if (address.getCountryName() != null && address.getCountryName().length() > 0) {
             addressString += address.getCountryName();
+        }
+
+        if (addressString.endsWith(", ")) {
+            addressString = addressString.substring(0, addressString.length() - 2);
         }
 
         return addressString;
