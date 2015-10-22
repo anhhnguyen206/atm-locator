@@ -4,6 +4,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModel;
+import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModelImpl;
 import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
 import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModelImpl;
 
@@ -20,5 +22,11 @@ public class ViewModelModule {
     @Singleton
     AtmFinderViewModel provideAtmFinderViewModel(AtmFinderViewModelImpl atmFinderViewModel) {
         return atmFinderViewModel;
+    }
+
+    @Provides
+    @Singleton
+    AddAtmViewModel provideAddAtmViewModel(AddAtmViewModelImpl addAtmViewModel) {
+        return addAtmViewModel;
     }
 }

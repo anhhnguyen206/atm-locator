@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.viewmodel;
 
+import javax.inject.Inject;
+
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.interactor.AddAtmInteractor;
@@ -24,6 +26,7 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
     private Scheduler schedulerIo;
     private Scheduler schedulerUi;
 
+    @Inject
     public AddAtmViewModelImpl(AddAtmInteractor addAtmInteractor,
                                @ForSchedulerIo Scheduler schedulerIo,
                                @ForSchedulerUi Scheduler schedulerUi) {

@@ -61,13 +61,27 @@
               tools:context="me.anhnguyen.atmfinder.view.AtmFinderActivitiy"
               android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_atm_fab"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_add"/>
+        android:layout_margin="@dimen/fab_margin">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/my_location_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            app:backgroundTint="@android:color/holo_blue_dark"
+            android:src="@android:drawable/ic_menu_mylocation"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_atm_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_add"/>
+    </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>

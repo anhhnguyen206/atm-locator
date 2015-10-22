@@ -4,7 +4,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="search_hint">Enter ATM names</string>
     <string name="loading">Loading ...</string>
-    <string name="title_activity_add_atm">AddAtmActivity</string>
+    <string name="title_activity_add_atm">Add ATM</string>
     <string name="hint_name">Name</string>
     <string name="hint_address">Address</string>
 </resources>

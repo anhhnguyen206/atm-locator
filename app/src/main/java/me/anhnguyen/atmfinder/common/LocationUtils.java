@@ -2,6 +2,8 @@ package me.anhnguyen.atmfinder.common;
 
 import android.location.Address;
 
+import com.google.android.gms.location.LocationRequest;
+
 /**
  * Created by nguyenhoanganh on 10/22/15.
  */
@@ -31,5 +33,13 @@ public class LocationUtils {
         }
 
         return addressString;
+    }
+
+    public static LocationRequest currentLocationRequest() {
+        LocationRequest request = LocationRequest.create() //standard GMS LocationRequest
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setNumUpdates(1)
+                .setInterval(100);
+        return request;
     }
 }

@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.interactor;
 
+import javax.inject.Inject;
+
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.repository.AtmRepository;
 import rx.Observable;
@@ -10,6 +12,7 @@ import rx.Observable;
 public class AddAtmInteractorImpl implements AddAtmInteractor {
     private AtmRepository atmRepository;
 
+    @Inject
     public AddAtmInteractorImpl(AtmRepository atmRepository) {
         this.atmRepository = atmRepository;
     }

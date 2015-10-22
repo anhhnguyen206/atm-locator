@@ -10,14 +10,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
-import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -29,16 +30,17 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import me.anhnguyen.atmfinder.R;
+import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
-import rx.Observable;
 import rx.Scheduler;
 
-public class AtmFinderActivitiy extends InjectableActivity implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
+public class AtmFinderActivitiy extends InjectableActivity implements OnMapReadyCallback {
     private GoogleMap map;
+    private LatLngBounds.Builder latLngBoundsBuilder = new LatLngBounds.Builder();
 
     @Bind(R.id.progress)
     ProgressBar progressBar;
@@ -51,6 +53,8 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     AtmRangeAdapter atmRangeAdapter;
     @Bind(R.id.add_atm_fab)
     FloatingActionButton addAtmFab;
+    @Bind(R.id.my_location_fab)
+    FloatingActionButton myLocationFab;
 
     @Inject
     AtmFinderViewModel atmFinderViewModel;
@@ -95,6 +99,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
         // bind result of atms
         atmFinderViewModel.atms()
+                .filter(atms -> atms.size() > 0)
                 .subscribe(atms -> showAtmsAsMarkers(atms));
 
         // bind search text
@@ -116,18 +121,34 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         // bind click event to perform search
         RxView.clicks(searchImageView)
                 .subscribe(o -> atmFinderViewModel.search());
+
+        RxView.clicks(addAtmFab)
+                .subscribe(o -> startActivity(AddAtmActivity.getActivityIntent(this)));
+
+        RxView.clicks(myLocationFab)
+                .subscribe(o -> getCurrentLocationAndMoveMap());
+
     }
 
     private void showAtmsAsMarkers(List<Atm> atms) {
         map.clear();
-        Observable.from(atms).subscribe(atm -> addAtmToMapAsMarker(atm));
+
+        for (Atm atm : atms) {
+            Marker marker = addAtmToMapAsMarker(atm);
+            latLngBoundsBuilder.include(marker.getPosition());
+        }
+
+        LatLngBounds bounds = latLngBoundsBuilder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 200);
+        map.animateCamera(cu);
     }
 
-    private void addAtmToMapAsMarker(Atm atm) {
+    private Marker addAtmToMapAsMarker(Atm atm) {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.flat(true);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_atm_16dp));
-        map.addMarker(markerOptions);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker));
+        markerOptions.position(new LatLng(atm.getLat(), atm.getLon()));
+        return map.addMarker(markerOptions);
     }
 
     private void showSearchProgress(Boolean loading) {
@@ -138,33 +159,24 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         hideProgress();
-
         map = googleMap;
-
-        bindViewModel();
-
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.setOnCameraChangeListener(this);
 
+        bindViewModel();
+        getCurrentLocationAndMoveMap();
+    }
+
+    private void getCurrentLocationAndMoveMap() {
         if (RxPermissions.getInstance(this).isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            LocationRequest request = LocationRequest.create() //standard GMS LocationRequest
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setNumUpdates(1)
-                    .setInterval(100);
-
-            reactiveLocationProvider.getUpdatedLocation(request)
+            reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                        atmFinderViewModel.searchLat().onNext(location.getLatitude());
+                        atmFinderViewModel.searchLon().onNext(location.getLongitude());
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     });
         }
-    }
-
-    @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
-        atmFinderViewModel.searchLat().onNext(cameraPosition.target.latitude);
-        atmFinderViewModel.searchLon().onNext(cameraPosition.target.longitude);
     }
 }

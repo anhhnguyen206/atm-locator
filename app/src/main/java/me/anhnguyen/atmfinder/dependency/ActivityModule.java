@@ -9,6 +9,7 @@ import dagger.Provides;
 import me.anhnguyen.atmfinder.dependency.annotation.ForActivity;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
+import me.anhnguyen.atmfinder.view.AddAtmActivity;
 import me.anhnguyen.atmfinder.view.AtmFinderActivitiy;
 import me.anhnguyen.atmfinder.view.InjectableActivity;
 import rx.Scheduler;
@@ -19,7 +20,7 @@ import rx.schedulers.Schedulers;
  * Created by nguyenhoanganh on 10/18/15.
  */
 @Module(
-        injects = AtmFinderActivitiy.class,
+        injects = { AtmFinderActivitiy.class, AddAtmActivity.class },
         addsTo = ApplicationModule.class,
         includes = ViewModelModule.class,
         library = true,
