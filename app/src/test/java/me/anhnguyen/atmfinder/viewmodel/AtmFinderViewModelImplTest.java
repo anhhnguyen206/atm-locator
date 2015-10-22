@@ -19,6 +19,7 @@ import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
 import me.anhnguyen.atmfinder.repository.AtmRepository;
 import me.anhnguyen.atmfinder.repository.AtmRepositoryImpl;
+import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
@@ -147,15 +148,16 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     }
 
     @Test(expected = Exception.class)
-    public void errorShouldEmitCorrectValue() {
-        atmRepository = Mockito.mock(AtmRepository.class);
-        findAtmInteractor = new FindAtmInteractorImpl(atmRepository);
+    public void errorShouldEmitCorrectValue() throws Exception {
+        findAtmInteractor = Mockito.mock(FindAtmInteractor.class);
         atmFinderViewModel = new AtmFinderViewModelImpl(findAtmInteractor, Schedulers.immediate(), Schedulers.immediate());
-        Mockito.when(atmRepository.findNearbyAtms(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
-                .thenThrow(new Exception("Test"));
+
+        Mockito.when(findAtmInteractor.execute(Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
+                .thenReturn(Observable.error(new Exception("Test")));
 
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.error().subscribe(testSubscriber);
+        atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValue("Test");
     }

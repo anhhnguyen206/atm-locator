@@ -6,7 +6,8 @@ import com.google.android.gms.location.LocationRequest;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by nguyenhoanganh on 10/22/15.
@@ -32,6 +33,21 @@ public class LocationUtilsTest {
         Address address = Mockito.mock(Address.class);
         Mockito.when(address.getMaxAddressLineIndex()).thenReturn(0);
         Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
+        Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
+        Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
+        Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
+        Mockito.when(address.getCountryName()).thenReturn("CountryName");
+
+        String expected = "SubLocality, SubAdminArea, AdminArea, CountryName";
+        String actual = LocationUtils.addressAsString(address);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addressAsStringWithAddressLineNull() {
+        Address address = Mockito.mock(Address.class);
+        Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
+        Mockito.when(address.getAddressLine(0)).thenReturn(null);
         Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
         Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
         Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
@@ -73,12 +89,42 @@ public class LocationUtilsTest {
     }
 
     @Test
+    public void addressAsStringWithSubLocalityNull() {
+        Address address = Mockito.mock(Address.class);
+        Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
+        Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
+        Mockito.when(address.getSubLocality()).thenReturn(null);
+        Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
+        Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
+        Mockito.when(address.getCountryName()).thenReturn("CountryName");
+
+        String expected = "AddressLine, SubAdminArea, AdminArea, CountryName";
+        String actual = LocationUtils.addressAsString(address);
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void addressAsStringWithSubAdminAreaEmpty() {
         Address address = Mockito.mock(Address.class);
         Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
         Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
         Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
         Mockito.when(address.getSubAdminArea()).thenReturn("");
+        Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
+        Mockito.when(address.getCountryName()).thenReturn("CountryName");
+
+        String expected = "AddressLine, SubLocality, AdminArea, CountryName";
+        String actual = LocationUtils.addressAsString(address);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addressAsStringWithSubAdminAreaNull() {
+        Address address = Mockito.mock(Address.class);
+        Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
+        Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
+        Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
+        Mockito.when(address.getSubAdminArea()).thenReturn(null);
         Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
         Mockito.when(address.getCountryName()).thenReturn("CountryName");
 
@@ -103,6 +149,21 @@ public class LocationUtilsTest {
     }
 
     @Test
+    public void addressAsStringWithAdminAreaNull() {
+        Address address = Mockito.mock(Address.class);
+        Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
+        Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
+        Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
+        Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
+        Mockito.when(address.getAdminArea()).thenReturn(null);
+        Mockito.when(address.getCountryName()).thenReturn("CountryName");
+
+        String expected = "AddressLine, SubLocality, SubAdminArea, CountryName";
+        String actual = LocationUtils.addressAsString(address);
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void addressAsStringWithCountryNameEmpty() {
         Address address = Mockito.mock(Address.class);
         Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
@@ -111,6 +172,21 @@ public class LocationUtilsTest {
         Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
         Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
         Mockito.when(address.getCountryName()).thenReturn("");
+
+        String expected = "AddressLine, SubLocality, SubAdminArea, AdminArea";
+        String actual = LocationUtils.addressAsString(address);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void addressAsStringWithCountryNameNull() {
+        Address address = Mockito.mock(Address.class);
+        Mockito.when(address.getMaxAddressLineIndex()).thenReturn(1);
+        Mockito.when(address.getAddressLine(0)).thenReturn("AddressLine");
+        Mockito.when(address.getSubLocality()).thenReturn("SubLocality");
+        Mockito.when(address.getSubAdminArea()).thenReturn("SubAdminArea");
+        Mockito.when(address.getAdminArea()).thenReturn("AdminArea");
+        Mockito.when(address.getCountryName()).thenReturn(null);
 
         String expected = "AddressLine, SubLocality, SubAdminArea, AdminArea";
         String actual = LocationUtils.addressAsString(address);

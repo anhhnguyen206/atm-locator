@@ -84,13 +84,13 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(
-                        atms -> {
-                            this.atms.onNext(atms);
-                            this.loading.onNext(Boolean.FALSE);
+                        atms1 -> {
+                            AtmFinderViewModelImpl.this.atms.onNext(atms1);
+                            AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         },
                         throwable -> {
-                            this.error.onNext(throwable);
-                            this.loading.onNext(Boolean.FALSE);
+                            AtmFinderViewModelImpl.this.error.onNext(throwable);
+                            AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         }
                 );
     }

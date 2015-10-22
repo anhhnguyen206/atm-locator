@@ -84,13 +84,13 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
         addAtmInteractor.execute(name.getValue(), address.getValue(), lat.getValue(), lon.getValue())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
-                .subscribe(atm -> {
-                            this.atm.onNext(atm);
-                            this.loading.onNext(Boolean.FALSE);
+                .subscribe(atm1 -> {
+                            AddAtmViewModelImpl.this.atm.onNext(atm1);
+                            AddAtmViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         },
                         throwable -> {
-                            this.error.onNext(throwable);
-                            this.loading.onNext(Boolean.FALSE);
+                            AddAtmViewModelImpl.this.error.onNext(throwable);
+                            AddAtmViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         }
                 );
     }
