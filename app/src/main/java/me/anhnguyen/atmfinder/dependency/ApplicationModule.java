@@ -40,8 +40,7 @@ public class ApplicationModule {
     DaoSession provideDaoSession() {
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(context, "atm-db", null);
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDatabase());
-        DaoSession daoSession = daoMaster.newSession();
-        return daoSession;
+        return daoMaster.newSession();
     }
 
     @Provides

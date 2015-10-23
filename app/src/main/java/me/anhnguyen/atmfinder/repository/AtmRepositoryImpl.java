@@ -83,9 +83,7 @@ public class AtmRepositoryImpl implements AtmRepository {
         lat = Math.toDegrees(lat);
         lon = Math.toDegrees(lon);
 
-        PointF newPoint = new PointF((float) lat, (float) lon);
-
-        return newPoint;
+        return new PointF((float) lat, (float) lon);
 
     }
 }

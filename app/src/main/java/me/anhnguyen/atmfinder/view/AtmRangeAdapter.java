@@ -51,7 +51,7 @@ public class AtmRangeAdapter extends ArrayAdapter<AtmRange> {
     }
 
     private View getCustomView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_range, parent, false);
             viewHolder = new ViewHolder(convertView);

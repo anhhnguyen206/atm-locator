@@ -40,11 +40,10 @@ public class LocationUtils {
     }
 
     public static LocationRequest currentLocationRequest() {
-        LocationRequest request = LocationRequest.create() //standard GMS LocationRequest
+        return LocationRequest.create() //standard GMS LocationRequest
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setNumUpdates(1)
                 .setInterval(100);
-        return request;
     }
 
     // return default lat lng in case

@@ -96,14 +96,13 @@ public class AtmDao extends AbstractDao<Atm, Long> {
     /** @inheritdoc */
     @Override
     public Atm readEntity(Cursor cursor, int offset) {
-        Atm entity = new Atm( //
+        return new Atm( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // name
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // address
             cursor.isNull(offset + 3) ? null : cursor.getDouble(offset + 3), // lat
             cursor.isNull(offset + 4) ? null : cursor.getDouble(offset + 4) // lon
         );
-        return entity;
     }
      
     /** @inheritdoc */

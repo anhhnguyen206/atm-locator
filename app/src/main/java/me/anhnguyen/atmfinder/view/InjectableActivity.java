@@ -2,7 +2,7 @@ package me.anhnguyen.atmfinder.view;
 
 import android.os.Bundle;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import dagger.ObjectGraph;
@@ -13,7 +13,6 @@ import me.anhnguyen.atmfinder.dependency.ActivityModule;
  * Created by nguyenhoanganh on 10/18/15.
  */
 public abstract class InjectableActivity extends BaseActivity {
-    private ObjectGraph activityGraph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +20,7 @@ public abstract class InjectableActivity extends BaseActivity {
 
         // Create the activity graph by .plus-ing our modules onto the application graph.
         AtmFinderApplication application = (AtmFinderApplication) getApplication();
-        activityGraph = application.getApplicationGraph().plus(getModules().toArray());
+        ObjectGraph activityGraph = application.getApplicationGraph().plus(getModules().toArray());
 
         // Inject ourselves so subclasses will have dependencies fulfilled when this method returns.
         activityGraph.inject(this);
@@ -33,6 +32,6 @@ public abstract class InjectableActivity extends BaseActivity {
      * calling {@code super.getModules()}.
      */
     protected List<Object> getModules() {
-        return Arrays.asList(new ActivityModule(this));
+        return Collections.singletonList(new ActivityModule(this));
     }
 }
