@@ -154,7 +154,7 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     }
 
     @Test
-    public void atmListShouldHaveOneAtmWithMaxRangeAndNonExistingKeywordSearch() {
+    public void atmListShouldHaveNoAtmWithMaxRangeAndNonExistingKeywordSearch() {
         TestSubscriber<List<Atm>> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.atms().subscribe(testSubscriber);
         atmFinderViewModel.setLat(currentLat);
