@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,8 +36,6 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
     EditText addressEditText;
     @Bind(R.id.save_fab)
     FloatingActionButton addAtmFab;
-    @Bind(R.id.pin)
-    ImageView pinImageView;
 
     @Inject
     AddAtmViewModel addAtmViewModel;
