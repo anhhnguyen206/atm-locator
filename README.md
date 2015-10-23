@@ -7,7 +7,7 @@
 - Model View ViewModel
     * Model: are interactors.  These interactors are the bridge between the view models to the data sources (local databases, Restful services ...)
     * ViewModel: expose changes that needed to any thing subscriber to it (in this case is a view), decide what to emit, when to emit it.
-    * View: all activities, fragments, custom views are treated as views only.  They should solely do things that matter in the UI (animation...)
+    * View: all activities, fragments, custom views are treated as views only. Holds an instance of a ViewModel then bind to it.
 - Dagger 1.2 to inject dependencies: http://square.github.io/dagger/
 - RxJava to perform asyncrhonous operation and reduce boilerplate code (https://github.com/ReactiveX/RxAndroid)
 - RxPermission to perform run-time permission request
