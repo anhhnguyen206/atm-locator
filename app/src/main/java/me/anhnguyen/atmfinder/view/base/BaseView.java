@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.base;
 
 /**
  * Created by nguyenhoanganh on 10/18/15.

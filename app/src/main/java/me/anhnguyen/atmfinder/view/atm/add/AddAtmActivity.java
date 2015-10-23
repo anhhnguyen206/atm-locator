@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.atm.add;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,8 @@ import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
-import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModel;
+import me.anhnguyen.atmfinder.view.base.LocationBasedActivitiy;
+import me.anhnguyen.atmfinder.viewmodel.atm.add.AddAtmViewModel;
 import rx.Scheduler;
 
 public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {

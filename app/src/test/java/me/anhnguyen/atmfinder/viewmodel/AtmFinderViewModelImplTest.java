@@ -19,6 +19,7 @@ import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
 import me.anhnguyen.atmfinder.repository.AtmRepository;
 import me.anhnguyen.atmfinder.repository.AtmRepositoryImpl;
+import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModelImpl;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;

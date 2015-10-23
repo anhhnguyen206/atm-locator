@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.atm.finder;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +34,9 @@ import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
-import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
+import me.anhnguyen.atmfinder.view.atm.add.AddAtmActivity;
+import me.anhnguyen.atmfinder.view.base.LocationBasedActivitiy;
+import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModel;
 import rx.Scheduler;
 
 public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {

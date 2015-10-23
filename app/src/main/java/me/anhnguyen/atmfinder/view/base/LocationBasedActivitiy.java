@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.base;
 
 import android.Manifest;
 import android.content.IntentSender;

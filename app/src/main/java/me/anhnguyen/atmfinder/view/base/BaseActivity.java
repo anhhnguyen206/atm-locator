@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.base;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;

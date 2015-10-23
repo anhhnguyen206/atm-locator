@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.view;
+package me.anhnguyen.atmfinder.view.atm.finder;
 
 import android.content.Context;
 import android.view.LayoutInflater;

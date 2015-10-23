@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.viewmodel;
+package me.anhnguyen.atmfinder.viewmodel.atm.add;
 
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import rx.Observable;

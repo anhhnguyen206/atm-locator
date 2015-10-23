@@ -4,10 +4,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModel;
-import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModelImpl;
-import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
-import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModelImpl;
+import me.anhnguyen.atmfinder.viewmodel.atm.add.AddAtmViewModel;
+import me.anhnguyen.atmfinder.viewmodel.atm.add.AddAtmViewModelImpl;
+import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModel;
+import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModelImpl;
 
 /**
  * Created by nguyenhoanganh on 10/21/15.

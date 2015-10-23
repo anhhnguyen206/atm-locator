@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.viewmodel;
+package me.anhnguyen.atmfinder.viewmodel.atm.finder;
 
 import java.util.List;
 

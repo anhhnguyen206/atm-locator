@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".view.AtmFinderActivitiy"
+            android:name=".view.atm.finder.AtmFinderActivitiy"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -40,14 +40,14 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".view.AddAtmActivity"
+            android:name=".view.atm.add.AddAtmActivity"
             android:label="@string/title_activity_add_atm"
-            android:parentActivityName=".view.AtmFinderActivitiy"
+            android:parentActivityName=".view.atm.finder.AtmFinderActivitiy"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.anhnguyen.atmfinder.view.AtmFinderActivitiy" />
+                android:value=".view.atm.finder.AtmFinderActivitiy" />
         </activity>
     </application>
 

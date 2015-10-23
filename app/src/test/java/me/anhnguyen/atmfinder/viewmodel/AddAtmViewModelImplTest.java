@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import me.anhnguyen.atmfinder.interactor.AddAtmInteractor;
 import me.anhnguyen.atmfinder.model.dao.Atm;
+import me.anhnguyen.atmfinder.viewmodel.atm.add.AddAtmViewModelImpl;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;

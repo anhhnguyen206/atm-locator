@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="me.anhnguyen.atmfinder.view.AddAtmActivity">
+    tools:context="me.anhnguyen.atmfinder.view.atm.add.AddAtmActivity">
 
     <include layout="@layout/toolbar"/>
 
@@ -17,7 +17,7 @@
               android:layout_height="match_parent"
               android:layout_marginTop="?attr/actionBarSize"
               android:id="@+id/map"
-              tools:context="me.anhnguyen.atmfinder.view.AtmFinderActivitiy"
+              tools:context="me.anhnguyen.atmfinder.view.atm.finder.AtmFinderActivitiy"
               android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     <include layout="@layout/content_add_atm"/>
