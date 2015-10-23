@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
+            android:singleLine="true"
             android:hint="@string/hint_name"
             android:padding="@dimen/medium_margin"
             android:textSize="@dimen/smal_text_size"/>
@@ -40,6 +41,7 @@
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
+            android:singleLine="true"
             android:hint="@string/hint_address"
             android:padding="@dimen/medium_margin"
             android:textSize="@dimen/smal_text_size"/>

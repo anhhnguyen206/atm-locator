@@ -49,6 +49,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/smal_text_size"
+                android:singleLine="true"
                 android:background="@android:color/transparent"
                 android:hint="@string/search_hint"/>
             <FrameLayout
