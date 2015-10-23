@@ -104,6 +104,11 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                 .filter(atms -> atms.size() > 0)
                 .subscribe(atms -> showAtmsAsMarkers(atms));
 
+        // bind info message
+        atmFinderViewModel.infoResId()
+                .compose(bindToLifecycle())
+                .subscribe(resId -> showToast(resId));
+
         // bind search text
         RxTextView.textChanges(searchEditText)
                 .compose(bindToLifecycle())

@@ -9,4 +9,5 @@
     <string name="hint_address">Address</string>
     <string name="location_permission_not_granted">Location permission is not granted. Using default location.</string>
     <string name="location_not_enabled">Location is not enabled. Using default location.</string>
+    <string name="no_atm_founds">No ATM founds. You can add one using the green button below.</string>
 </resources>

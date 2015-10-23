@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.interactor.FindAtmInteractor;
@@ -20,6 +21,7 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     private BehaviorSubject<List<Atm>> atms = BehaviorSubject.create(Collections.<Atm>emptyList());
     private BehaviorSubject<Boolean> loading = BehaviorSubject.create(Boolean.FALSE);
     private BehaviorSubject<Throwable> error = BehaviorSubject.create();
+    private BehaviorSubject<Integer> infoResId = BehaviorSubject.create();
 
     private BehaviorSubject<Double> lat = BehaviorSubject.create();
     private BehaviorSubject<Double> lon = BehaviorSubject.create();
@@ -54,6 +56,11 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     @Override
     public Observable<String> error() {
         return error.map(throwable -> throwable.getMessage());
+    }
+
+    @Override
+    public Observable<Integer> infoResId() {
+        return infoResId.asObservable();
     }
 
     @Override
@@ -103,6 +110,11 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
         findAtmInteractor.execute(searchText.getValue(), lat.getValue(), lon.getValue(), searchRange.getValue())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
+                .doOnNext(atms -> {
+                    if (atms.size() == 0) {
+                        infoResId.onNext(R.string.no_atm_founds);
+                    }
+                })
                 .subscribe(
                         atms -> {
                             AtmFinderViewModelImpl.this.atms.onNext(atms);

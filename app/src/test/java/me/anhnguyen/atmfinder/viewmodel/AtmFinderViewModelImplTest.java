@@ -13,6 +13,7 @@ import java.util.List;
 import de.greenrobot.dao.test.AbstractDaoTestLongPk;
 import me.anhnguyen.atmfinder.AtmRepositoryTestHelper;
 import me.anhnguyen.atmfinder.BuildConfig;
+import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.interactor.FindAtmInteractor;
 import me.anhnguyen.atmfinder.interactor.FindAtmInteractorImpl;
 import me.anhnguyen.atmfinder.model.dao.Atm;
@@ -197,5 +198,18 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValue("Test");
+    }
+
+    @Test
+    public void shouldEmitCorrectInfoResIdWhenNoAtmFounds() {
+        TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.infoResId().subscribe(testSubscriber);
+        atmFinderViewModel.setLat(currentLat);
+        atmFinderViewModel.setLon(currentLon);
+        atmFinderViewModel.setRange((double) 20000);
+        atmFinderViewModel.setKeyword("jghfkjhgf");
+        atmFinderViewModel.search();
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue(R.string.no_atm_founds);
     }
 }

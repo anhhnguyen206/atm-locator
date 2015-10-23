@@ -12,6 +12,9 @@ public interface AtmFinderViewModel {
     Observable<List<Atm>> atms();
     Observable<Boolean> loading();
     Observable<String> error();
+
+    // use Integer to eliminate dependency to Context.getResource().getString()
+    Observable<Integer> infoResId();
     Observable<Double> lat();
     Observable<Double> lon();
     Observable<Double> range();
