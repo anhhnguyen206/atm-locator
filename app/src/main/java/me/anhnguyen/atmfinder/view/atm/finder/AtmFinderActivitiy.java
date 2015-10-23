@@ -103,12 +103,12 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         // bind search text
         RxTextView.textChanges(searchEditText)
-                .subscribe(charSequence -> atmFinderViewModel.searchText().onNext(charSequence.toString()));
+                .subscribe(charSequence -> atmFinderViewModel.setKeyword(charSequence.toString()));
 
         rangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                atmFinderViewModel.searchRange().onNext(atmRangeAdapter.getItem(position).getRange());
+                atmFinderViewModel.setRange(atmRangeAdapter.getItem(position).getRange());
             }
 
             @Override
@@ -172,8 +172,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
-                        atmFinderViewModel.searchLat().onNext(location.getLatitude());
-                        atmFinderViewModel.searchLon().onNext(location.getLongitude());
+                        atmFinderViewModel.setLat(location.getLatitude());
+                        atmFinderViewModel.setLat(location.getLongitude());
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     });
 
@@ -185,8 +185,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                         } else {
                             showToast("Location permission is not granted. Using default location.");
                             LatLng latLng = LocationUtils.defaultLatLng();
-                            atmFinderViewModel.searchLat().onNext(latLng.latitude);
-                            atmFinderViewModel.searchLon().onNext(latLng.longitude);
+                            atmFinderViewModel.setLat(latLng.latitude);
+                            atmFinderViewModel.setLon(latLng.longitude);
                             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                         }
                     });
@@ -195,8 +195,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        atmFinderViewModel.searchLat().onNext(cameraPosition.target.latitude);
-        atmFinderViewModel.searchLon().onNext(cameraPosition.target.longitude);
+        atmFinderViewModel.setLat(cameraPosition.target.latitude);
+        atmFinderViewModel.setLon(cameraPosition.target.longitude);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
                 .subscribeOn(schedulerIo)

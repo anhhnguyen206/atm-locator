@@ -57,7 +57,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
             includes: ['me/anhnguyen/atmfinder/common/*.class',
                        'me/anhnguyen/atmfinder/interactor/*.class',
                        'me/anhnguyen/atmfinder/repository/*.class',
-                       'me/anhnguyen/atmfinder/viewmodel/*.class'
+                       'me/anhnguyen/atmfinder/viewmodel/**/*.class'
             ],
             excludes: ['**/R*.class',
                        '**/*$InjectAdapter.class',

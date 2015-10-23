@@ -75,9 +75,9 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     }
 
     @Test
-    public void searchTextShouldBeEmptyStringByDefault() {
+    public void keywordShouldBeEmptyStringByDefault() {
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
-        atmFinderViewModel.searchText().subscribe(testSubscriber);
+        atmFinderViewModel.keyword().subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
         testSubscriber.assertValue("");
     }
@@ -85,18 +85,54 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     @Test
     public void searchRangeShouldBe2000ByDefault() {
         TestSubscriber<Double> testSubscriber = new TestSubscriber<>();
-        atmFinderViewModel.searchRange().subscribe(testSubscriber);
+        atmFinderViewModel.range().subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
-        testSubscriber.assertValue(Double.valueOf(2000));
+        testSubscriber.assertValue((double) 2000);
+    }
+
+    @Test
+    public void latShouldEmitCorrectValueWhenSetLat() {
+        TestSubscriber<Double> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.lat().subscribe(testSubscriber);
+        atmFinderViewModel.setLat(20000);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue((double) 20000);
+    }
+
+    @Test
+    public void lonShouldEmitCorrectValueWhenSetLon() {
+        TestSubscriber<Double> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.lon().subscribe(testSubscriber);
+        atmFinderViewModel.setLon(20000);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue((double) 20000);
+    }
+
+    @Test
+    public void keywordShouldEmitCorrectValueWhenSetKeyword() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.keyword().subscribe(testSubscriber);
+        atmFinderViewModel.setKeyword("VCB");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValues("", "VCB");
+    }
+
+    @Test
+    public void rangeShouldEmitCorrectValueWhenSetRange() {
+        TestSubscriber<Double> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.range().subscribe(testSubscriber);
+        atmFinderViewModel.setRange(20000);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValues((double) 2000, (double) 20000);
     }
 
     @Test
     public void atmListShouldHaveAllAtmsWithMaxRangeNoKeywordSearch() {
         TestSubscriber<List<Atm>> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.atms().subscribe(testSubscriber);
-        atmFinderViewModel.searchLat().onNext(currentLat);
-        atmFinderViewModel.searchLon().onNext(currentLon);
-        atmFinderViewModel.searchRange().onNext((double) 20000);
+        atmFinderViewModel.setLat(currentLat);
+        atmFinderViewModel.setLon(currentLon);
+        atmFinderViewModel.setRange((double) 20000);
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
@@ -107,10 +143,10 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     public void atmListShouldHaveOneAtmWithMaxRangeAndVietcombankKeywordSearch() {
         TestSubscriber<List<Atm>> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.atms().subscribe(testSubscriber);
-        atmFinderViewModel.searchLat().onNext(currentLat);
-        atmFinderViewModel.searchLon().onNext(currentLon);
-        atmFinderViewModel.searchRange().onNext((double) 20000);
-        atmFinderViewModel.searchText().onNext("Vietcombank");
+        atmFinderViewModel.setLat(currentLat);
+        atmFinderViewModel.setLon(currentLon);
+        atmFinderViewModel.setRange((double) 20000);
+        atmFinderViewModel.setKeyword("Vietcombank");
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
@@ -121,10 +157,10 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     public void atmListShouldHaveOneAtmWithMaxRangeAndNonExistingKeywordSearch() {
         TestSubscriber<List<Atm>> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.atms().subscribe(testSubscriber);
-        atmFinderViewModel.searchLat().onNext(currentLat);
-        atmFinderViewModel.searchLon().onNext(currentLon);
-        atmFinderViewModel.searchRange().onNext((double) 20000);
-        atmFinderViewModel.searchText().onNext("jghfkjhgf");
+        atmFinderViewModel.setLat(currentLat);
+        atmFinderViewModel.setLon(currentLon);
+        atmFinderViewModel.setRange((double) 20000);
+        atmFinderViewModel.setKeyword("jghfkjhgf");
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
@@ -135,10 +171,10 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
     public void loadingShouldEmitCorrectValues() {
         TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.loading().subscribe(testSubscriber);
-        atmFinderViewModel.searchLat().onNext(currentLat);
-        atmFinderViewModel.searchLon().onNext(currentLon);
-        atmFinderViewModel.searchRange().onNext((double) 20000);
-        atmFinderViewModel.searchText().onNext("Vietcombank");
+        atmFinderViewModel.setLat(currentLat);
+        atmFinderViewModel.setLon(currentLon);
+        atmFinderViewModel.setRange((double) 20000);
+        atmFinderViewModel.setKeyword("Vietcombank");
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         // first emitted value is the default Boolean.False

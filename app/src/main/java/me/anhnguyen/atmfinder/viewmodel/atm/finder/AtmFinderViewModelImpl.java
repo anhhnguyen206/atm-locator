@@ -57,23 +57,43 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
-    public BehaviorSubject<Double> searchLat() {
-        return lat;
+    public Observable<Double> lat() {
+        return lat.asObservable();
     }
 
     @Override
-    public BehaviorSubject<Double> searchLon() {
-        return lon;
+    public Observable<Double> lon() {
+        return lon.asObservable();
     }
 
     @Override
-    public BehaviorSubject<Double> searchRange() {
-        return searchRange;
+    public Observable<Double> range() {
+        return searchRange.asObservable();
     }
 
     @Override
-    public BehaviorSubject<String> searchText() {
-        return searchText;
+    public Observable<String> keyword() {
+        return searchText.asObservable();
+    }
+
+    @Override
+    public void setLat(double lat) {
+        this.lat.onNext(lat);
+    }
+
+    @Override
+    public void setLon(double lon) {
+        this.lon.onNext(lon);
+    }
+
+    @Override
+    public void setRange(double range) {
+        this.searchRange.onNext(range);
+    }
+
+    @Override
+    public void setKeyword(String keyword) {
+        this.searchText.onNext(keyword);
     }
 
     @Override
@@ -84,8 +104,8 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(
-                        atms1 -> {
-                            AtmFinderViewModelImpl.this.atms.onNext(atms1);
+                        atms -> {
+                            AtmFinderViewModelImpl.this.atms.onNext(atms);
                             AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         },
                         throwable -> {
