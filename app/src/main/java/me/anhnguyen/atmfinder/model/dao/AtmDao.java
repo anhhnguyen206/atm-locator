@@ -28,7 +28,7 @@ public class AtmDao extends AbstractDao<Atm, Long> {
         public final static Property Address = new Property(2, String.class, "address", false, "ADDRESS");
         public final static Property Lat = new Property(3, Double.class, "lat", false, "LAT");
         public final static Property Lon = new Property(4, Double.class, "lon", false, "LON");
-    };
+    }
 
 
     public AtmDao(DaoConfig config) {
