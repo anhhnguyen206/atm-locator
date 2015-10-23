@@ -90,19 +90,23 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     private void bindViewModel() {
         // bind search progress loading
         atmFinderViewModel.loading()
+                .compose(bindToLifecycle())
                 .subscribe(loading -> showSearchProgress(loading));
 
         // bind error message
         atmFinderViewModel.error()
+                .compose(bindToLifecycle())
                 .subscribe(error -> showToast(error));
 
         // bind result of atms
         atmFinderViewModel.atms()
+                .compose(bindToLifecycle())
                 .filter(atms -> atms.size() > 0)
                 .subscribe(atms -> showAtmsAsMarkers(atms));
 
         // bind search text
         RxTextView.textChanges(searchEditText)
+                .compose(bindToLifecycle())
                 .subscribe(charSequence -> atmFinderViewModel.setKeyword(charSequence.toString()));
 
         rangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -119,12 +123,15 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         // bind click event to perform search
         RxView.clicks(searchImageView)
+                .compose(bindToLifecycle())
                 .subscribe(o -> atmFinderViewModel.search());
 
         RxView.clicks(addAtmFab)
+                .compose(bindToLifecycle())
                 .subscribe(o -> startActivity(AddAtmActivity.getActivityIntent(this)));
 
         RxView.clicks(myLocationFab)
+                .compose(bindToLifecycle())
                 .subscribe(o -> getCurrentLocationAndMoveMap());
 
     }
@@ -170,6 +177,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     private void getCurrentLocationAndMoveMap() {
         if (locationPermissionGranted()) {
             currentLocation()
+                    .compose(bindToLifecycle())
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
@@ -180,6 +188,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         } else {
             requestLocationPermission()
+                    .compose(bindToLifecycle())
                     .subscribe(permission -> {
                         if (permission.granted) {
                             getCurrentLocationAndMoveMap();
@@ -200,6 +209,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
         atmFinderViewModel.setLon(cameraPosition.target.longitude);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
+                .compose(bindToLifecycle())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(address -> {

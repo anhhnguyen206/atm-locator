@@ -3,9 +3,10 @@ package me.anhnguyen.atmfinder.view.base;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -14,7 +15,7 @@ import me.anhnguyen.atmfinder.R;
 /**
  * Created by nguyenhoanganh on 10/18/15.
  */
-public abstract class BaseActivity extends AppCompatActivity implements BaseView {
+public abstract class BaseActivity extends RxAppCompatActivity implements BaseView {
     @Bind(R.id.toolbar)
     @Nullable
     Toolbar toolbar;

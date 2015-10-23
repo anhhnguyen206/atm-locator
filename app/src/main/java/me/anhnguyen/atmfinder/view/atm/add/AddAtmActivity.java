@@ -93,6 +93,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
     private void getCurrentLocationAndMoveMap() {
         currentLocation()
+                .compose(bindToLifecycle())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(location -> {
@@ -102,15 +103,19 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
     private void bindViewModel() {
         RxTextView.textChanges(nameEditText)
+                .compose(bindToLifecycle())
                 .subscribe(charSequence -> addAtmViewModel.setName(charSequence.toString()));
 
         RxTextView.textChanges(addressEditText)
+                .compose(bindToLifecycle())
                 .subscribe(charSequence -> addAtmViewModel.setAddress(charSequence.toString()));
 
         addAtmViewModel.error()
+                .compose(bindToLifecycle())
                 .subscribe(s -> showToast(s));
 
         addAtmViewModel.loading()
+                .compose(bindToLifecycle())
                 .subscribe(loading -> {
                     if (loading) {
                         showProgress(getString(R.string.loading));
@@ -120,12 +125,15 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
                 });
 
         addAtmViewModel.canSave()
+                .compose(bindToLifecycle())
                 .subscribe(canSave -> addAtmFab.setClickable(canSave));
 
         RxView.clicks(addAtmFab)
+                .compose(bindToLifecycle())
                 .subscribe(o -> addAtmViewModel.add());
 
         addAtmViewModel.done()
+                .compose(bindToLifecycle())
                 .subscribe(atm -> finish());
     }
 
@@ -135,6 +143,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         addAtmViewModel.setLon(cameraPosition.target.longitude);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
+                .compose(bindToLifecycle())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(address -> addressEditText.setText(LocationUtils.addressAsString(address)));
