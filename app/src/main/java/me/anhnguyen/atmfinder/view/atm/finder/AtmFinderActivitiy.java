@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.trello.rxlifecycle.ActivityEvent;
 
 import java.util.List;
 
@@ -90,28 +91,28 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     private void bindViewModel() {
         // bind search progress loading
         atmFinderViewModel.loading()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(loading -> showSearchProgress(loading));
 
         // bind error message
         atmFinderViewModel.error()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(error -> showToast(error));
 
         // bind result of atms
         atmFinderViewModel.atms()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .filter(atms -> atms.size() > 0)
                 .subscribe(atms -> showAtmsAsMarkers(atms));
 
         // bind info message
         atmFinderViewModel.infoResId()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(resId -> showToast(resId));
 
         // bind search text
         RxTextView.textChanges(searchEditText)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(charSequence -> atmFinderViewModel.setKeyword(charSequence.toString()));
 
         rangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -128,15 +129,15 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         // bind click event to perform search
         RxView.clicks(searchImageView)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(o -> atmFinderViewModel.search());
 
         RxView.clicks(addAtmFab)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(o -> startActivity(AddAtmActivity.getActivityIntent(this)));
 
         RxView.clicks(myLocationFab)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(o -> getCurrentLocationAndMoveMap());
 
     }
@@ -182,7 +183,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     private void getCurrentLocationAndMoveMap() {
         if (locationPermissionGranted()) {
             currentLocation()
-                    .compose(bindToLifecycle())
+                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
@@ -193,7 +194,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         } else {
             requestLocationPermission()
-                    .compose(bindToLifecycle())
+                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(permission -> {
                         if (permission.granted) {
                             getCurrentLocationAndMoveMap();
@@ -214,7 +215,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
         atmFinderViewModel.setLon(cameraPosition.target.longitude);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(address -> {

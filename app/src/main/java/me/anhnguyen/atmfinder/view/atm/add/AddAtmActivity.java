@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.trello.rxlifecycle.ActivityEvent;
 
 import javax.inject.Inject;
 
@@ -75,6 +76,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
             getCurrentLocationAndMoveMap();
         } else {
             requestLocationPermission()
+                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(permission -> {
                         if (permission.granted) {
                             getCurrentLocationAndMoveMap();
@@ -93,7 +95,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
     private void getCurrentLocationAndMoveMap() {
         currentLocation()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(location -> {
@@ -103,19 +105,19 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
     private void bindViewModel() {
         RxTextView.textChanges(nameEditText)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(charSequence -> addAtmViewModel.setName(charSequence.toString()));
 
         RxTextView.textChanges(addressEditText)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(charSequence -> addAtmViewModel.setAddress(charSequence.toString()));
 
         addAtmViewModel.error()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(s -> showToast(s));
 
         addAtmViewModel.loading()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(loading -> {
                     if (loading) {
                         showProgress(getString(R.string.loading));
@@ -125,15 +127,15 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
                 });
 
         addAtmViewModel.canSave()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(canSave -> addAtmFab.setClickable(canSave));
 
         RxView.clicks(addAtmFab)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(o -> addAtmViewModel.add());
 
         addAtmViewModel.done()
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(atm -> finish());
     }
 
@@ -143,7 +145,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         addAtmViewModel.setLon(cameraPosition.target.longitude);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .compose(bindToLifecycle())
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(address -> addressEditText.setText(LocationUtils.addressAsString(address)));
