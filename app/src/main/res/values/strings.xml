@@ -7,4 +7,6 @@
     <string name="title_activity_add_atm">Add ATM</string>
     <string name="hint_name">Name</string>
     <string name="hint_address">Address</string>
+    <string name="location_permission_not_granted">Location permission is not granted. Using default location.</string>
+    <string name="location_not_enabled">Location is not enabled. Using default location.</string>
 </resources>

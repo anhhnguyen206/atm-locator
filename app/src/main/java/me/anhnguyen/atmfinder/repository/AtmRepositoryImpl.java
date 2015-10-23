@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.dao.query.QueryBuilder;
-import me.anhnguyen.atmfinder.common.Constants;
+import me.anhnguyen.atmfinder.Constants;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.model.dao.AtmDao;
 

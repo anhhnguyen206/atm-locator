@@ -162,6 +162,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
         hideProgress();
         map = googleMap;
         map.setOnCameraChangeListener(this);
+        map.getUiSettings().setMapToolbarEnabled(false);
         bindViewModel();
         getCurrentLocationAndMoveMap();
     }
@@ -183,7 +184,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                         if (permission.granted) {
                             getCurrentLocationAndMoveMap();
                         } else {
-                            showToast("Location permission is not granted. Using default location.");
+                            showToast(getString(R.string.location_permission_not_granted));
                             LatLng latLng = LocationUtils.defaultLatLng();
                             atmFinderViewModel.setLat(latLng.latitude);
                             atmFinderViewModel.setLon(latLng.longitude);

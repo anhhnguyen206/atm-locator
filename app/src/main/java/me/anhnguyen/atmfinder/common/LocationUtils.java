@@ -1,6 +1,7 @@
 package me.anhnguyen.atmfinder.common;
 
 import android.location.Address;
+import android.location.Location;
 
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
@@ -44,6 +45,13 @@ public class LocationUtils {
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setNumUpdates(1)
                 .setInterval(100);
+    }
+
+    public static Location defaultLocation() {
+        Location location = new Location("");
+        location.setLatitude(10.7725563);
+        location.setLongitude(106.6958022);
+        return location;
     }
 
     // return default lat lng in case

@@ -9,12 +9,14 @@ import android.util.Log;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.tbruyelle.rxpermissions.Permission;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
 
+import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.common.LocationUtils;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
@@ -23,8 +25,8 @@ import rx.Observable;
  * Created by nguyenhoanganh on 10/23/15.
  */
 public abstract class LocationBasedActivitiy extends InjectableActivity {
-
     private static final int REQUEST_CHECK_SETTINGS = 1;
+
     @Inject
     ReactiveLocationProvider reactiveLocationProvider;
 
@@ -53,16 +55,28 @@ public abstract class LocationBasedActivitiy extends InjectableActivity {
                         .build();
 
         return reactiveLocationProvider.checkLocationSettings(locationSettingsRequest)
-                .doOnNext(locationSettingsResult -> {
-                    Status status = locationSettingsResult.getStatus();
-                    if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                        try {
-                            status.startResolutionForResult(this, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.e("AtmFinderActivity", "Error opening settings activity.", e);
-                        }
+                .doOnNext(locationSettingsResult -> resolveLocationSettingsResult(locationSettingsResult))
+                .flatMap(locationSettingsResult -> {
+                    if (locationSettingsResult.getStatus().isCanceled()) {
+                        return Observable.just(LocationUtils.defaultLocation());
+                    } else {
+                        return reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest());
                     }
-                })
-                .flatMap(locationSettingsResult -> reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest()));
+                });
+    }
+
+    private void resolveLocationSettingsResult(LocationSettingsResult locationSettingsResult) {
+        Status status = locationSettingsResult.getStatus();
+        if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+            try {
+                status.startResolutionForResult(this, REQUEST_CHECK_SETTINGS);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e("AtmFinderActivity", "Error opening settings activity.", e);
+            }
+        }
+
+        if (status.getStatus().isCanceled()) {
+            showToast(getString(R.string.location_not_enabled));
+        }
     }
 }

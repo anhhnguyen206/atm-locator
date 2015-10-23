@@ -1,4 +1,4 @@
-package me.anhnguyen.atmfinder.common;
+package me.anhnguyen.atmfinder;
 
 /**
  * Created by nguyenhoanganh on 10/21/15.

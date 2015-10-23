@@ -1,18 +1,26 @@
 package me.anhnguyen.atmfinder.common;
 
 import android.location.Address;
+import android.location.Location;
 
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
+
+import me.anhnguyen.atmfinder.BuildConfig;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by nguyenhoanganh on 10/22/15.
  */
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class)
 public class LocationUtilsTest {
     @Test
     public void addressAsStringWithAllInformation() throws Exception {
@@ -203,10 +211,16 @@ public class LocationUtilsTest {
     }
 
     @Test
-    public void defaultLatLngShouldReturnBenThanhMarket() throws Exception {
+    public void defaultLatLngShouldReturnCorrectLatitudeLongitude() throws Exception {
         LatLng latLng = LocationUtils.defaultLatLng();
-        //10.7725563,106.6958022
         assertEquals(Double.valueOf(10.7725563), Double.valueOf(latLng.latitude));
         assertEquals(Double.valueOf(106.6958022), Double.valueOf(latLng.longitude));
+    }
+
+    @Test
+    public void defaultLocationShouldReturnCorrectLatitudeLongitude() throws Exception {
+        Location location = LocationUtils.defaultLocation();
+        assertEquals(Double.valueOf(10.7725563), Double.valueOf(location.getLatitude()));
+        assertEquals(Double.valueOf(106.6958022), Double.valueOf(location.getLongitude()));
     }
 }
