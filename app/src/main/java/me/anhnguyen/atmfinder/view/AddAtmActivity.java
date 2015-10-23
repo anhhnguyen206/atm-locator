@@ -24,10 +24,9 @@ import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.viewmodel.AddAtmViewModel;
-import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Scheduler;
 
-public class AddAtmActivity extends InjectableActivity implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
+public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
     private GoogleMap map;
 
     @Bind(R.id.edit_text_name)
@@ -41,8 +40,6 @@ public class AddAtmActivity extends InjectableActivity implements OnMapReadyCall
 
     @Inject
     AddAtmViewModel addAtmViewModel;
-    @Inject
-    ReactiveLocationProvider reactiveLocationProvider;
     @Inject
     @ForSchedulerIo
     Scheduler schedulerIo;
@@ -94,7 +91,7 @@ public class AddAtmActivity extends InjectableActivity implements OnMapReadyCall
     }
 
     private void getCurrentLocationAndMoveMap() {
-        reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
+        currentLocation()
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(location -> {
@@ -136,11 +133,9 @@ public class AddAtmActivity extends InjectableActivity implements OnMapReadyCall
         addAtmViewModel.setLat(cameraPosition.target.latitude);
         addAtmViewModel.setLon(cameraPosition.target.longitude);
 
-        reactiveLocationProvider
-                .getReverseGeocodeObservable(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .filter(addresses -> addresses.size() > 0)
+        reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
-                .subscribe(addresses -> addressEditText.setText(LocationUtils.addressAsString(addresses.get(0))));
+                .subscribe(address -> addressEditText.setText(LocationUtils.addressAsString(address)));
     }
 }

@@ -35,10 +35,10 @@ import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.viewmodel.AtmFinderViewModel;
-import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Scheduler;
 
-public class AtmFinderActivitiy extends InjectableActivity implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
+public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
+    private static final int REQUEST_CHECK_SETTINGS = 1;
     private GoogleMap map;
     private LatLngBounds.Builder latLngBoundsBuilder = new LatLngBounds.Builder();
 
@@ -60,8 +60,6 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
     @Inject
     AtmFinderViewModel atmFinderViewModel;
-    @Inject
-    ReactiveLocationProvider reactiveLocationProvider;
     @Inject
     @ForSchedulerIo
     Scheduler schedulerIo;
@@ -168,7 +166,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
 
     private void getCurrentLocationAndMoveMap() {
         if (locationPermissionGranted()) {
-            reactiveLocationProvider.getUpdatedLocation(LocationUtils.currentLocationRequest())
+            currentLocation()
                     .subscribeOn(schedulerIo)
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
@@ -176,6 +174,7 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
                         atmFinderViewModel.searchLon().onNext(location.getLongitude());
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
                     });
+
         } else {
             requestLocationPermission()
                     .subscribe(permission -> {
@@ -197,13 +196,11 @@ public class AtmFinderActivitiy extends InjectableActivity implements OnMapReady
         atmFinderViewModel.searchLat().onNext(cameraPosition.target.latitude);
         atmFinderViewModel.searchLon().onNext(cameraPosition.target.longitude);
 
-        reactiveLocationProvider
-                .getReverseGeocodeObservable(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .filter(addresses -> addresses.size() > 0)
+        reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
-                .subscribe(addresses -> {
-                    editTextAddress.setText(LocationUtils.addressAsString(addresses.get(0)));
+                .subscribe(address -> {
+                    editTextAddress.setText(LocationUtils.addressAsString(address));
                 });
     }
 }
