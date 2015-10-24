@@ -1,7 +1,10 @@
 # ATM LOCATOR
 ### Getting started
 - Before you build the source, please supply your own Google Map Api Key at google_maps_api.xml.
-- Set JAVA_HOME8 and JAVA_HOME7 environment variables. Both should point to home directory of jdk 1.8 and jdk 1.7
+- Set JAVA8_HOME and JAVA7_HOME environment variables. Both should point to home directory of jdk 1.8 and jdk 1.7. In case you on MacOs: put these 3 lines in your bash_profile:
+   -  export JAVA6_HOME=`/usr/libexec/java_home -v 1.6`  
+      export JAVA7_HOME=`/usr/libexec/java_home -v 1.7`  
+      export JAVA8_HOME=`/usr/libexec/java_home -v 1.8`  
 
 ### Architecture
 - Model View ViewModel
