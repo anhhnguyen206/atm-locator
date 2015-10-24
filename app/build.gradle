@@ -90,12 +90,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     }
 }
 
-retrolambda {
-    jdk System.getenv("JAVA_HOME8")
-    oldJdk System.getenv("JAVA_HOME7")
-    javaVersion JavaVersion.VERSION_1_7
-}
-
 ext.supportLibraryVersion = '23.0.1'
 
 dependencies {
