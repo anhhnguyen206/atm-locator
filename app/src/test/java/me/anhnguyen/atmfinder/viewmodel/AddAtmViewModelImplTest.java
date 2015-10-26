@@ -180,7 +180,7 @@ public class AddAtmViewModelImplTest {
     }
 
     @Test
-    public void setLatLngIfOnlyDifferentFromTheCurrentValue() {
+    public void setLatLngIfBothLatAndLngDifferentFromTheCurrentValue() {
         LatLng latLng = new LatLng(10.68588, 107.59394);
         TestSubscriber<LatLng> testSubscriber = new TestSubscriber<>();
         addAtmViewModelImpl.latLng().subscribe(testSubscriber);
@@ -188,6 +188,30 @@ public class AddAtmViewModelImplTest {
         addAtmViewModelImpl.setLatLng(latLng);
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
+    }
+
+    @Test
+    public void setLatLngIfLatDifferentFromTheCurrentValue() {
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        TestSubscriber<LatLng> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.latLng().subscribe(testSubscriber);
+        addAtmViewModelImpl.setLatLng(latLng);
+        latLng = new LatLng(10.65588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(2);
+    }
+
+    @Test
+    public void setLatLngIfLngDifferentFromTheCurrentValue() {
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        TestSubscriber<LatLng> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.latLng().subscribe(testSubscriber);
+        addAtmViewModelImpl.setLatLng(latLng);
+        latLng = new LatLng(10.68588, 102.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(2);
     }
 
     @Test(expected = Exception.class)

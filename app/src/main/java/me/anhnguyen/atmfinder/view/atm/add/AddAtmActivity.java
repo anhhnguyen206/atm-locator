@@ -72,8 +72,10 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         hideProgress();
         map = googleMap;
+
         map.setMyLocationEnabled(false);
         map.setOnCameraChangeListener(this);
+
         bindViewModel();
         prePopulateData();
     }
@@ -83,11 +85,12 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         String keyword = getIntent().getStringExtra(Constants.Bundle.KEYWORD);
 
         if (centerLatLng != null) {
-            addAtmViewModel.setLatLng(centerLatLng);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(centerLatLng, 14);
+            map.animateCamera(cameraUpdate);
         }
 
         if (!TextUtils.isEmpty(keyword)) {
-            addAtmViewModel.setName(keyword);
+            nameEditText.setText(keyword);
         }
     }
 
@@ -128,22 +131,12 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
         addAtmViewModel.latLng()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(latLng -> {
-                    map.setOnCameraChangeListener(null);
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
-                    map.animateCamera(cameraUpdate);
-                    map.setOnCameraChangeListener(this);
-                });
+                .flatMap(latLng -> reverseGeocode(latLng.latitude, latLng.longitude, 1))
+                .subscribe(address -> addressEditText.setText(LocationUtils.addressAsString(address)));
     }
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         addAtmViewModel.setLatLng(cameraPosition.target);
-
-        reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(schedulerIo)
-                .observeOn(schedulerUi)
-                .subscribe(address -> addressEditText.setText(LocationUtils.addressAsString(address)));
     }
 }

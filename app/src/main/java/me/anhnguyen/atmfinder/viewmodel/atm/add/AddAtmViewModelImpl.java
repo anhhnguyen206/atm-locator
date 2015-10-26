@@ -96,6 +96,8 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
             if (currentLatLng.latitude != latLng.latitude || currentLatLng.longitude != latLng.longitude) {
                 this.latLng.onNext(latLng);
             }
+        } else {
+            this.latLng.onNext(latLng);
         }
     }
 
