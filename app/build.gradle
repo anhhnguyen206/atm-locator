@@ -62,7 +62,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
             excludes: ['**/R*.class',
                        '**/*$InjectAdapter.class',
                        '**/*$ModuleAdapter.class',
-                       '**/*$ViewInjector*.class'
+                       '**/*$ViewInjector*.class',
+                       '**/*$Lambda$*.class'
             ])
     sourceDirectories = files(coverageSourceDirs)
     executionData = files("$buildDir/jacoco/testDebugUnitTest.exec")
