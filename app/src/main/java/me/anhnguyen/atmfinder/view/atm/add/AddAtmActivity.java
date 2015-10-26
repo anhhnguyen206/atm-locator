@@ -129,8 +129,10 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         addAtmViewModel.latLng()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(latLng -> {
+                    map.setOnCameraChangeListener(null);
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
                     map.animateCamera(cameraUpdate);
+                    map.setOnCameraChangeListener(this);
                 });
     }
 

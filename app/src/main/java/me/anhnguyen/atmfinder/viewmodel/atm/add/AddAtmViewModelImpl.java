@@ -90,10 +90,13 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
 
     @Override
     public void setLatLng(LatLng latLng) {
-        if (this.latLng.getValue() != latLng) {
-            this.latLng.onNext(latLng);
-        }
+        LatLng currentLatLng = this.latLng.getValue();
 
+        if (currentLatLng != null) {
+            if (currentLatLng.latitude != latLng.latitude || currentLatLng.longitude != latLng.longitude) {
+                this.latLng.onNext(latLng);
+            }
+        }
     }
 
     @Override
