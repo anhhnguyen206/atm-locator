@@ -111,6 +111,85 @@ public class AddAtmViewModelImplTest {
         testSubscriber.assertValues(Boolean.TRUE, Boolean.FALSE);
     }
 
+    @Test
+    public void nameShouldEmitCorrectValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.name().subscribe(testSubscriber);
+        addAtmViewModelImpl.setName("ATM");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue("ATM");
+    }
+
+    @Test
+    public void shouldNotSetNameIfTheSameAsTheCurrentValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.name().subscribe(testSubscriber);
+        addAtmViewModelImpl.setName("ATM");
+        addAtmViewModelImpl.setName("ATM");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+    }
+
+    @Test
+    public void setNameIfOnlyDifferentFromTheCurrentValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.name().subscribe(testSubscriber);
+        addAtmViewModelImpl.setName("ATM");
+        addAtmViewModelImpl.setName("ATM2");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(2);
+    }
+
+    @Test
+    public void addressShouldEmitCorrectValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.address().subscribe(testSubscriber);
+        addAtmViewModelImpl.setAddress("ATM");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue("ATM");
+    }
+
+    @Test
+    public void shouldNotSetAddressIfTheSameAsTheCurrentValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.address().subscribe(testSubscriber);
+        addAtmViewModelImpl.setAddress("ATM");
+        addAtmViewModelImpl.setAddress("ATM");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+    }
+
+    @Test
+    public void setAddressIfOnlyDifferentFromTheCurrentValue() {
+        TestSubscriber<String> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.address().subscribe(testSubscriber);
+        addAtmViewModelImpl.setAddress("ATM");
+        addAtmViewModelImpl.setAddress("ATM2");
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(2);
+    }
+
+    @Test
+    public void latLngShouldEmitCorrectValue() {
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        TestSubscriber<LatLng> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.latLng().subscribe(testSubscriber);
+        addAtmViewModelImpl.setLatLng(latLng);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValue(latLng);
+    }
+
+    @Test
+    public void setLatLngIfOnlyDifferentFromTheCurrentValue() {
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        TestSubscriber<LatLng> testSubscriber = new TestSubscriber<>();
+        addAtmViewModelImpl.latLng().subscribe(testSubscriber);
+        addAtmViewModelImpl.setLatLng(latLng);
+        addAtmViewModelImpl.setLatLng(latLng);
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertValueCount(1);
+    }
+
     @Test(expected = Exception.class)
     public void errorShouldEmitCorrectValue() {
         Mockito.when(addAtmInteractor.execute(Mockito.anyString(), Mockito.anyString(), Mockito.anyDouble(), Mockito.anyDouble()))
@@ -126,6 +205,12 @@ public class AddAtmViewModelImplTest {
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
         testSubscriber.assertValues("Test");
+    }
+
+    @Test
+    public void errorMethodShouldReturnStringObservable() {
+        Observable<String> observable = addAtmViewModelImpl.error();
+        assertNotNull(observable);
     }
 
     @Test
