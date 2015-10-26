@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.text.TextUtils;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +21,7 @@ import com.trello.rxlifecycle.ActivityEvent;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import me.anhnguyen.atmfinder.Constants;
 import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
@@ -46,8 +49,11 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
     @ForSchedulerUi
     Scheduler schedulerUi;
 
-    public static Intent getActivityIntent(Context context) {
-        return new Intent(context, AddAtmActivity.class);
+    public static Intent getActivityIntent(Context context, String keyword, LatLng centerLatLng) {
+        Intent intent = new Intent(context, AddAtmActivity.class);
+        intent.putExtra(Constants.Bundle.KEYWORD, keyword);
+        intent.putExtra(Constants.Bundle.CENTER_LATLNG, centerLatLng);
+        return intent;
     }
 
     @Override
@@ -68,36 +74,21 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         map = googleMap;
         map.setMyLocationEnabled(false);
         map.setOnCameraChangeListener(this);
-
-        if (locationPermissionGranted()) {
-            getCurrentLocationAndMoveMap();
-        } else {
-            requestLocationPermission()
-                    .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                    .subscribe(permission -> {
-                        if (permission.granted) {
-                            getCurrentLocationAndMoveMap();
-                        } else {
-                            showToast("Location permission is not granted. Using default location.");
-                            LatLng latLng = LocationUtils.defaultLatLng();
-                            addAtmViewModel.setLat(latLng.latitude);
-                            addAtmViewModel.setLon(latLng.longitude);
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-                        }
-                    });
-        }
-
         bindViewModel();
+        prePopulateData();
     }
 
-    private void getCurrentLocationAndMoveMap() {
-        currentLocation()
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(schedulerIo)
-                .observeOn(schedulerUi)
-                .subscribe(location -> {
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
-                });
+    private void prePopulateData() {
+        LatLng centerLatLng = getIntent().getParcelableExtra(Constants.Bundle.CENTER_LATLNG);
+        String keyword = getIntent().getStringExtra(Constants.Bundle.KEYWORD);
+
+        if (centerLatLng != null) {
+            addAtmViewModel.setLatLng(centerLatLng);
+        }
+
+        if (!TextUtils.isEmpty(keyword)) {
+            addAtmViewModel.setName(keyword);
+        }
     }
 
     private void bindViewModel() {
@@ -134,12 +125,18 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         addAtmViewModel.done()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(atm -> finish());
+
+        addAtmViewModel.latLng()
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(latLng -> {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 14);
+                    map.animateCamera(cameraUpdate);
+                });
     }
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        addAtmViewModel.setLat(cameraPosition.target.latitude);
-        addAtmViewModel.setLon(cameraPosition.target.longitude);
+        addAtmViewModel.setLatLng(cameraPosition.target);
 
         reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))

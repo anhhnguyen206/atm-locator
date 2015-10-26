@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.viewmodel.atm.add;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import javax.inject.Inject;
 
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
@@ -16,8 +18,7 @@ import rx.subjects.BehaviorSubject;
 public class AddAtmViewModelImpl implements AddAtmViewModel {
     private BehaviorSubject<String> address = BehaviorSubject.create();
     private BehaviorSubject<String> name = BehaviorSubject.create();
-    private BehaviorSubject<Double> lat = BehaviorSubject.create();
-    private BehaviorSubject<Double> lon = BehaviorSubject.create();
+    private BehaviorSubject<LatLng> latLng = BehaviorSubject.create();
     private BehaviorSubject<Boolean> loading = BehaviorSubject.create();
     private BehaviorSubject<Throwable> error = BehaviorSubject.create();
     private BehaviorSubject<Atm> atm = BehaviorSubject.create();
@@ -38,8 +39,8 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
     @Override
     public Observable<Boolean> canSave() {
         return Observable.
-                combineLatest(address.asObservable(), name.asObservable(), lat.asObservable(), lon.asObservable(),
-                        (address, name, lat, lon) -> address.length() > 0 && name.length() > 0 && lat != null && lon != null);
+                combineLatest(address(), name(), latLng(),
+                        (address, name, latLng) -> address.length() > 0 && name.length() > 0 && latLng != null);
 
     }
 
@@ -59,29 +60,46 @@ public class AddAtmViewModelImpl implements AddAtmViewModel {
     }
 
     @Override
+    public Observable<String> address() {
+        return address.asObservable();
+    }
+
+    @Override
+    public Observable<String> name() {
+        return name.asObservable();
+    }
+
+    @Override
+    public Observable<LatLng> latLng() {
+        return latLng.asObservable();
+    }
+
+    @Override
     public void setAddress(String address) {
-        this.address.onNext(address);
+        if (this.address.getValue() == null || !this.address.getValue().equals(address)) {
+            this.address.onNext(address);
+        }
     }
 
     @Override
     public void setName(String name) {
-        this.name.onNext(name);
+        if (this.name.getValue() == null || !this.name.getValue().equals(name)) {
+            this.name.onNext(name);
+        }
     }
 
     @Override
-    public void setLat(double lat) {
-        this.lat.onNext(lat);
-    }
+    public void setLatLng(LatLng latLng) {
+        if (this.latLng.getValue() != latLng) {
+            this.latLng.onNext(latLng);
+        }
 
-    @Override
-    public void setLon(double lon) {
-        this.lon.onNext(lon);
     }
 
     @Override
     public void add() {
         loading.onNext(Boolean.TRUE);
-        addAtmInteractor.execute(name.getValue(), address.getValue(), lat.getValue(), lon.getValue())
+        addAtmInteractor.execute(name.getValue(), address.getValue(), latLng.getValue().latitude, latLng.getValue().longitude)
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(atm1 -> {

@@ -5,4 +5,9 @@ package me.anhnguyen.atmfinder;
  */
 public class Constants {
     public final static double EARTH_RADIUS = 6371000;
+
+    public static class Bundle {
+        public static final String KEYWORD = "KEYWORD";
+        public static final String CENTER_LATLNG = "CENTER_LATLNG";
+    }
 }

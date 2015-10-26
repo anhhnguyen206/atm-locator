@@ -25,4 +25,8 @@ public interface AtmFinderViewModel {
     void setRange(double range);
     void setKeyword(String keyword);
     void search();
+
+    double getLat();
+    double getLon();
+    String getKeyword();
 }

@@ -134,7 +134,10 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         RxView.clicks(addAtmFab)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(o -> startActivity(AddAtmActivity.getActivityIntent(this)));
+                .subscribe(o -> {
+                    LatLng latLng = new LatLng(atmFinderViewModel.getLat(), atmFinderViewModel.getLat());
+                    startActivity(AddAtmActivity.getActivityIntent(this, atmFinderViewModel.getKeyword(), latLng));
+                });
 
         RxView.clicks(myLocationFab)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))

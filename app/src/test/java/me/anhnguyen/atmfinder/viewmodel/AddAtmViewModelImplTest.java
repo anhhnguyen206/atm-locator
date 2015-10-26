@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.viewmodel;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -39,8 +41,8 @@ public class AddAtmViewModelImplTest {
                 .subscribe(canSaveSubscriber);
         addAtmViewModelImpl.setName("Vietcombank");
         addAtmViewModelImpl.setAddress("Vietcombank");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
         canSaveSubscriber.assertNoErrors();
         canSaveSubscriber.assertValue(Boolean.TRUE);
     }
@@ -62,8 +64,8 @@ public class AddAtmViewModelImplTest {
                 .subscribe(canSaveSubscriber);
         addAtmViewModelImpl.setName("");
         addAtmViewModelImpl.setAddress("");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
 
         canSaveSubscriber.assertNoErrors();
         canSaveSubscriber.assertValueCount(1);
@@ -84,8 +86,8 @@ public class AddAtmViewModelImplTest {
         addAtmViewModelImpl.loading().subscribe(testSubscriber);
         addAtmViewModelImpl.setName("Vietcombank");
         addAtmViewModelImpl.setAddress("Vietcombank");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
         addAtmViewModelImpl.add();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
@@ -101,8 +103,8 @@ public class AddAtmViewModelImplTest {
         addAtmViewModelImpl.loading().subscribe(testSubscriber);
         addAtmViewModelImpl.setName("Vietcombank");
         addAtmViewModelImpl.setAddress("Vietcombank");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
         addAtmViewModelImpl.add();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
@@ -118,8 +120,8 @@ public class AddAtmViewModelImplTest {
         addAtmViewModelImpl.error().subscribe(testSubscriber);
         addAtmViewModelImpl.setName("Vietcombank");
         addAtmViewModelImpl.setAddress("Vietcombank");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
         addAtmViewModelImpl.add();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);
@@ -135,8 +137,8 @@ public class AddAtmViewModelImplTest {
         addAtmViewModelImpl.done().subscribe(testSubscriber);
         addAtmViewModelImpl.setName("Vietcombank");
         addAtmViewModelImpl.setAddress("Vietcombank");
-        addAtmViewModelImpl.setLat(10.68588);
-        addAtmViewModelImpl.setLon(107.59394);
+        LatLng latLng = new LatLng(10.68588, 107.59394);
+        addAtmViewModelImpl.setLatLng(latLng);
         addAtmViewModelImpl.add();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(1);

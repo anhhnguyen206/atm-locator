@@ -126,4 +126,19 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
                         }
                 );
     }
+
+    @Override
+    public double getLat() {
+        return lat.getValue();
+    }
+
+    @Override
+    public double getLon() {
+        return lon.getValue();
+    }
+
+    @Override
+    public String getKeyword() {
+        return searchText.getValue();
+    }
 }
