@@ -20,6 +20,7 @@ public interface AtmFinderViewModel {
     Observable<LatLng> latLng();
     Observable<Double> range();
     Observable<String> keyword();
+    Observable<Boolean> drawCircle();
 
     void setLatLng(LatLng latLng);
     void setRange(double range);
@@ -27,5 +28,6 @@ public interface AtmFinderViewModel {
     void search();
 
     LatLng getLatLng();
+    double getRange();
     String getKeyword();
 }

@@ -250,4 +250,42 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
         atmFinderViewModel.setKeyword("Hello");
         assertEquals("Hello", atmFinderViewModel.getKeyword());
     }
+
+    @Test
+    public void getRangeShouldReturnCorrectRange() {
+        atmFinderViewModel.setRange(3000);
+        assertEquals(Double.valueOf(3000), Double.valueOf(atmFinderViewModel.getRange()));
+    }
+
+    @Test
+    public void drawCircleShouldEmitTrueWhenBothRangeAndLatLngHaveValues() {
+        TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.drawCircle().subscribe(testSubscriber);
+        atmFinderViewModel.setRange(3000);
+        atmFinderViewModel.setLatLng(currentLatLng);
+        testSubscriber.assertValue(Boolean.TRUE);
+    }
+
+    @Test
+    public void drawCircleShouldNotEmitAnythingWhenLatLngHasNoValues() {
+        TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.drawCircle().subscribe(testSubscriber);
+        atmFinderViewModel.setRange(3000);
+        testSubscriber.assertNoValues();
+    }
+
+    @Test
+    public void drawCircleShouldEmitFalseWhenLatLngIsNull() {
+        TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+        atmFinderViewModel.drawCircle().subscribe(testSubscriber);
+        atmFinderViewModel.setRange(3000);
+        atmFinderViewModel.setLatLng(null);
+        testSubscriber.assertValue(Boolean.FALSE);
+    }
+
+    @Test
+    public void drawCircleShouldReturnBooleanObservable() {
+        Observable<Boolean> booleanObservable = atmFinderViewModel.drawCircle();
+        assertNotNull(booleanObservable);
+    }
 }

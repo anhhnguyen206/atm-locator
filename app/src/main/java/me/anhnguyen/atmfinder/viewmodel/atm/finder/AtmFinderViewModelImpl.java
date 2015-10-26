@@ -80,6 +80,11 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
+    public Observable<Boolean> drawCircle() {
+        return Observable.combineLatest(range(), latLng(), (range, latLng) -> range != null && latLng != null);
+    }
+
+    @Override
     public void setLatLng(LatLng latLng) {
         LatLng currentLatLng = this.latLng.getValue();
 
@@ -129,6 +134,11 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     @Override
     public LatLng getLatLng() {
         return latLng.getValue();
+    }
+
+    @Override
+    public double getRange() {
+        return searchRange.getValue();
     }
 
     @Override

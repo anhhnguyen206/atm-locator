@@ -17,6 +17,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -41,9 +43,9 @@ import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModel;
 import rx.Scheduler;
 
 public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener {
-    private static final int REQUEST_CHECK_SETTINGS = 1;
     private GoogleMap map;
     private LatLngBounds.Builder latLngBoundsBuilder = new LatLngBounds.Builder();
+    private Circle searchCircle;
 
     @Bind(R.id.progress)
     ProgressBar progressBar;
@@ -109,14 +111,29 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(resId -> showToast(resId));
 
+        // bind address changes when latlng changes
         atmFinderViewModel.latLng()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .flatMap(latLng -> reverseGeocode(latLng.latitude, latLng.longitude, 1))
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .subscribe(address -> {
                     editTextAddress.setText(LocationUtils.addressAsString(address));
+                });
+
+        atmFinderViewModel.drawCircle()
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(should -> {
+                    if (searchCircle != null) {
+                        searchCircle.remove();
+                    }
+
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(atmFinderViewModel.getLatLng())
+                            .radius(atmFinderViewModel.getRange())
+                            .strokeColor(getResources().getColor(R.color.colorPrimary));
+
+                    searchCircle = map.addCircle(circleOptions);
                 });
 
         // bind search text
@@ -156,14 +173,16 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     private void showAtmsAsMarkers(List<Atm> atms) {
         map.clear();
 
-        for (Atm atm : atms) {
-            Marker marker = addAtmToMapAsMarker(atm);
-            latLngBoundsBuilder.include(marker.getPosition());
-        }
+        if (atms.size() > 0) {
+            for (Atm atm : atms) {
+                Marker marker = addAtmToMapAsMarker(atm);
+                latLngBoundsBuilder.include(marker.getPosition());
+            }
 
-        LatLngBounds bounds = latLngBoundsBuilder.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 200);
-        map.animateCamera(cu);
+            LatLngBounds bounds = latLngBoundsBuilder.build();
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 200);
+            map.animateCamera(cu);
+        }
     }
 
     private Marker addAtmToMapAsMarker(Atm atm) {
