@@ -12,6 +12,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.anhnguyen.atmfinder.Constants;
 import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.model.ui.AtmRange;
 
@@ -23,11 +24,11 @@ public class AtmRangeAdapter extends ArrayAdapter<AtmRange> {
 
     public AtmRangeAdapter(Context context) {
         super(context, 0);
-        ranges.add(new AtmRange("2 km", 2000));
-        ranges.add(new AtmRange("5 km", 5000));
-        ranges.add(new AtmRange("10 km", 10000));
-        ranges.add(new AtmRange("15 km", 15000));
-        ranges.add(new AtmRange("20 km", 20000));
+        ranges.add(new AtmRange("2 km", Constants.RANGES[0]));
+        ranges.add(new AtmRange("5 km", Constants.RANGES[1]));
+        ranges.add(new AtmRange("10 km", Constants.RANGES[2]));
+        ranges.add(new AtmRange("15 km", Constants.RANGES[3]));
+        ranges.add(new AtmRange("20 km", Constants.RANGES[4]));
     }
 
     @Override
