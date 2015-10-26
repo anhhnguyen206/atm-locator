@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.viewmodel.atm.finder;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -23,8 +25,7 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     private BehaviorSubject<Throwable> error = BehaviorSubject.create();
     private BehaviorSubject<Integer> infoResId = BehaviorSubject.create();
 
-    private BehaviorSubject<Double> lat = BehaviorSubject.create();
-    private BehaviorSubject<Double> lon = BehaviorSubject.create();
+    private BehaviorSubject<LatLng> latLng = BehaviorSubject.create();
     private BehaviorSubject<String> searchText = BehaviorSubject.create("");
 
     // default search range to be 2000 m
@@ -64,13 +65,8 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
-    public Observable<Double> lat() {
-        return lat.asObservable();
-    }
-
-    @Override
-    public Observable<Double> lon() {
-        return lon.asObservable();
+    public Observable<LatLng> latLng() {
+        return latLng.asObservable();
     }
 
     @Override
@@ -84,13 +80,16 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
-    public void setLat(double lat) {
-        this.lat.onNext(lat);
-    }
+    public void setLatLng(LatLng latLng) {
+        LatLng currentLatLng = this.latLng.getValue();
 
-    @Override
-    public void setLon(double lon) {
-        this.lon.onNext(lon);
+        if (currentLatLng != null) {
+            if (currentLatLng.latitude != latLng.latitude || currentLatLng.longitude != latLng.longitude) {
+                this.latLng.onNext(latLng);
+            }
+        } else {
+            this.latLng.onNext(latLng);
+        }
     }
 
     @Override
@@ -107,7 +106,7 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     public void search() {
         loading.onNext(Boolean.TRUE);
 
-        findAtmInteractor.execute(searchText.getValue(), lat.getValue(), lon.getValue(), searchRange.getValue())
+        findAtmInteractor.execute(searchText.getValue(), latLng.getValue().latitude, latLng.getValue().longitude, searchRange.getValue())
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .doOnNext(atms -> {
@@ -128,13 +127,8 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     }
 
     @Override
-    public double getLat() {
-        return lat.getValue();
-    }
-
-    @Override
-    public double getLon() {
-        return lon.getValue();
+    public LatLng getLatLng() {
+        return latLng.getValue();
     }
 
     @Override

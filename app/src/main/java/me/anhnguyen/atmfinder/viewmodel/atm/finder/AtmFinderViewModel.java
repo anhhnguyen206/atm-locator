@@ -1,5 +1,7 @@
 package me.anhnguyen.atmfinder.viewmodel.atm.finder;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 import me.anhnguyen.atmfinder.model.dao.Atm;
@@ -15,18 +17,15 @@ public interface AtmFinderViewModel {
 
     // use Integer to eliminate dependency to Context.getResource().getString()
     Observable<Integer> infoResId();
-    Observable<Double> lat();
-    Observable<Double> lon();
+    Observable<LatLng> latLng();
     Observable<Double> range();
     Observable<String> keyword();
 
-    void setLat(double lat);
-    void setLon(double lon);
+    void setLatLng(LatLng latLng);
     void setRange(double range);
     void setKeyword(String keyword);
     void search();
 
-    double getLat();
-    double getLon();
+    LatLng getLatLng();
     String getKeyword();
 }
