@@ -220,13 +220,5 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         atmFinderViewModel.setLatLng(cameraPosition.target);
-
-        reverseGeocode(cameraPosition.target.latitude, cameraPosition.target.longitude, 1)
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(schedulerIo)
-                .observeOn(schedulerUi)
-                .subscribe(address -> {
-                    editTextAddress.setText(LocationUtils.addressAsString(address));
-                });
     }
 }
