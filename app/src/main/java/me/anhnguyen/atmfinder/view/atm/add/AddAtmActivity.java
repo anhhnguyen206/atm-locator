@@ -117,7 +117,7 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
 
         if (centerLatLng != null) {
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(centerLatLng, 14);
-            map.animateCamera(cameraUpdate);
+            map.moveCamera(cameraUpdate);
         }
 
         if (!TextUtils.isEmpty(keyword)) {
