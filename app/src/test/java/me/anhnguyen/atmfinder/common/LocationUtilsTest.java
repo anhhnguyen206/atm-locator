@@ -15,6 +15,7 @@ import org.robolectric.annotation.Config;
 import me.anhnguyen.atmfinder.BuildConfig;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by nguyenhoanganh on 10/22/15.
@@ -222,5 +223,10 @@ public class LocationUtilsTest {
         Location location = LocationUtils.defaultLocation();
         assertEquals(Double.valueOf(10.7725563), Double.valueOf(location.getLatitude()));
         assertEquals(Double.valueOf(106.6958022), Double.valueOf(location.getLongitude()));
+    }
+
+    @Test
+    public void convertCenterAndRadiusToBoundsShouldReturnLatLngBounds() {
+        assertNotNull(LocationUtils.convertCenterAndRadiusToBounds(LocationUtils.defaultLatLng(), 5000));
     }
 }

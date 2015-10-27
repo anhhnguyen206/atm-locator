@@ -3,7 +3,6 @@ package me.anhnguyen.atmfinder.repository;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,16 +46,6 @@ public class AtmRepositoryImpl implements AtmRepository {
         queryBuilder.where(AtmDao.Properties.Lon.gt(eastPoint.longitude));
         queryBuilder.orderRaw(" abs(lat - " + lat + ") + abs(lon - " + lon + ")");
 
-        List<Atm> atms = queryBuilder.list();
-        List<Atm> refinedResults = new ArrayList<>();
-
-        for (Atm atm : atms) {
-            double distanceFromCenterToAtm = SphericalUtil.computeDistanceBetween(center, new LatLng(atm.getLat(), atm.getLon()));
-            if (distanceFromCenterToAtm <= range) {
-                refinedResults.add(atm);
-            }
-        }
-
-        return refinedResults;
+        return queryBuilder.list();
     }
 }
