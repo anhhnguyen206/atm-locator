@@ -37,6 +37,14 @@ public class AtmRepositoryTestHelper {
         atm.setLon(106.6776794);
 
         atmDao.insert(atm);
+
+        atm = createEntity(4l);
+        atm.setName("ANZ Bank");
+        atm.setAddress("Nguyen thi Minh Khai");
+        atm.setLat(10.783345560024472);
+        atm.setLon(106.69874332845211);
+
+        atmDao.insert(atm);
     }
 
     private Atm createEntity(Long key) {
