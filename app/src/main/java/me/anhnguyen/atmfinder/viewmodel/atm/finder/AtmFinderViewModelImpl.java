@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import me.anhnguyen.atmfinder.Constants;
+import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.interactor.FindAtmInteractor;
@@ -112,22 +113,25 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
     @Override
     public void search() {
         List<Double> possibleRanges = Constants.RANGES.subList(Constants.RANGES.indexOf(searchRange.getValue()), Constants.RANGES.size());
-
         Observable.from(possibleRanges)
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
                 .doOnNext(range -> loading.onNext(Boolean.TRUE))
-                .doOnNext(range -> this.searchRange.onNext(range))
+                .doOnNext(range -> setRange(range))
                 .flatMap(range -> findAtmInteractor.execute(searchText.getValue(), latLng.getValue().latitude, latLng.getValue().longitude, range))
                 .takeUntil(atms -> atms.size() > 0)
                 .subscribe(
                         atms -> {
-                            AtmFinderViewModelImpl.this.atms.onNext(atms);
-                            AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
+                            if (getRange() == Constants.MAX_RANGE && atms.size() == 0) {
+                                infoResId.onNext(R.string.no_atm_founds);
+                            }
+
+                            this.atms.onNext(atms);
+                            this.loading.onNext(Boolean.FALSE);
                         },
                         throwable -> {
-                            AtmFinderViewModelImpl.this.error.onNext(throwable);
-                            AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
+                            this.error.onNext(throwable);
+                            this.loading.onNext(Boolean.FALSE);
                         }
                 );
 

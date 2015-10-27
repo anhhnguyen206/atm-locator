@@ -212,7 +212,7 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
         testSubscriber.assertValues(Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void errorShouldEmitCorrectValue() throws Exception {
         findAtmInteractor = Mockito.mock(FindAtmInteractor.class);
         atmFinderViewModel = new AtmFinderViewModelImpl(findAtmInteractor, Schedulers.immediate(), Schedulers.immediate());
@@ -222,6 +222,7 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
 
         TestSubscriber<String> testSubscriber = new TestSubscriber<>();
         atmFinderViewModel.error().subscribe(testSubscriber);
+        atmFinderViewModel.setLatLng(currentLatLng);
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValue("Test");
