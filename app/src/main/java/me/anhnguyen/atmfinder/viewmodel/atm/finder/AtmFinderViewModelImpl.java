@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import me.anhnguyen.atmfinder.R;
+import me.anhnguyen.atmfinder.Constants;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.interactor.FindAtmInteractor;
@@ -99,7 +99,9 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
 
     @Override
     public void setRange(double range) {
-        this.searchRange.onNext(range);
+        if (searchRange.getValue() != range) {
+            this.searchRange.onNext(range);
+        }
     }
 
     @Override
@@ -109,16 +111,15 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
 
     @Override
     public void search() {
-        loading.onNext(Boolean.TRUE);
+        List<Double> possibleRanges = Constants.RANGES.subList(Constants.RANGES.indexOf(searchRange.getValue()), Constants.RANGES.size());
 
-        findAtmInteractor.execute(searchText.getValue(), latLng.getValue().latitude, latLng.getValue().longitude, searchRange.getValue())
+        Observable.from(possibleRanges)
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
-                .doOnNext(atms -> {
-                    if (atms.size() == 0) {
-                        infoResId.onNext(R.string.no_atm_founds);
-                    }
-                })
+                .doOnNext(range -> loading.onNext(Boolean.TRUE))
+                .doOnNext(range -> this.searchRange.onNext(range))
+                .flatMap(range -> findAtmInteractor.execute(searchText.getValue(), latLng.getValue().latitude, latLng.getValue().longitude, range))
+                .takeUntil(atms -> atms.size() > 0)
                 .subscribe(
                         atms -> {
                             AtmFinderViewModelImpl.this.atms.onNext(atms);
@@ -129,6 +130,7 @@ public class AtmFinderViewModelImpl implements AtmFinderViewModel {
                             AtmFinderViewModelImpl.this.loading.onNext(Boolean.FALSE);
                         }
                 );
+
     }
 
     @Override

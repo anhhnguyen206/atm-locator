@@ -24,11 +24,11 @@ public class AtmRangeAdapter extends ArrayAdapter<AtmRange> {
 
     public AtmRangeAdapter(Context context) {
         super(context, 0);
-        ranges.add(new AtmRange("2 km", Constants.RANGES[0]));
-        ranges.add(new AtmRange("5 km", Constants.RANGES[1]));
-        ranges.add(new AtmRange("10 km", Constants.RANGES[2]));
-        ranges.add(new AtmRange("15 km", Constants.RANGES[3]));
-        ranges.add(new AtmRange("20 km", Constants.RANGES[4]));
+        ranges.add(new AtmRange("2 km", Constants.RANGES.get(0)));
+        ranges.add(new AtmRange("5 km", Constants.RANGES.get(1)));
+        ranges.add(new AtmRange("10 km", Constants.RANGES.get(2)));
+        ranges.add(new AtmRange("15 km", Constants.RANGES.get(3)));
+        ranges.add(new AtmRange("20 km", Constants.RANGES.get(4)));
     }
 
     @Override

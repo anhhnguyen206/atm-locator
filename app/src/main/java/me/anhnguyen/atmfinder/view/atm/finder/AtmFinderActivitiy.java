@@ -27,11 +27,14 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.trello.rxlifecycle.ActivityEvent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import me.anhnguyen.atmfinder.Constants;
 import me.anhnguyen.atmfinder.R;
 import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
@@ -72,6 +75,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     @ForSchedulerUi
     Scheduler schedulerUi;
 
+    private List<Marker> markers = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +108,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         // bind result of atms
         atmFinderViewModel.atms()
+                .doOnNext(atms -> clearMarkers())
+                .filter(atms -> atms.size() > 0)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(atms -> showAtmsAsMarkers(atms));
 
@@ -117,24 +124,32 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                 .flatMap(latLng -> reverseGeocode(latLng.latitude, latLng.longitude, 1))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
-                .subscribe(address -> {
-                    editTextAddress.setText(LocationUtils.addressAsString(address));
-                });
+                .subscribe(
+                        address -> editTextAddress.setText(LocationUtils.addressAsString(address)),
+                        throwable -> showToast(throwable.getMessage())
+                );
 
         atmFinderViewModel.drawCircle()
+                .debounce(400, TimeUnit.MILLISECONDS)
+                .subscribeOn(schedulerIo)
+                .observeOn(schedulerUi)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(should -> {
                     if (searchCircle != null) {
-                        searchCircle.remove();
+                        searchCircle.setCenter(atmFinderViewModel.getLatLng());
+                        searchCircle.setRadius(atmFinderViewModel.getRange());
+                    } else {
+                        CircleOptions circleOptions = new CircleOptions()
+                                .center(atmFinderViewModel.getLatLng())
+                                .radius(atmFinderViewModel.getRange())
+                                .strokeColor(getResources().getColor(R.color.colorPrimary));
+
+                        searchCircle = map.addCircle(circleOptions);
                     }
-
-                    CircleOptions circleOptions = new CircleOptions()
-                            .center(atmFinderViewModel.getLatLng())
-                            .radius(atmFinderViewModel.getRange())
-                            .strokeColor(getResources().getColor(R.color.colorPrimary));
-
-                    searchCircle = map.addCircle(circleOptions);
                 });
+
+        atmFinderViewModel.range()
+                .subscribe(range -> rangeSpinner.setSelection(Constants.RANGES.indexOf(range)));
 
         // bind search text
         RxTextView.textChanges(searchEditText)
@@ -171,17 +186,21 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     }
 
     private void showAtmsAsMarkers(List<Atm> atms) {
-        map.clear();
+        for (Atm atm : atms) {
+            Marker marker = addAtmToMapAsMarker(atm);
+            markers.add(marker);
+        }
 
-        if (atms.size() > 0) {
-            for (Atm atm : atms) {
-                Marker marker = addAtmToMapAsMarker(atm);
-                latLngBoundsBuilder.include(marker.getPosition());
-            }
+        LatLngBounds latLngBounds = LocationUtils.convertCenterAndRadiusToBounds(atmFinderViewModel.getLatLng(), atmFinderViewModel.getRange());
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds, 200);
+        map.animateCamera(cu);
+    }
 
-            LatLngBounds bounds = latLngBoundsBuilder.build();
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 200);
-            map.animateCamera(cu);
+    private void clearMarkers() {
+        for (int i = markers.size() - 1; i >= 0; i--) {
+            Marker marker = markers.get(i);
+            markers.remove(marker);
+            marker.remove();
         }
     }
 
