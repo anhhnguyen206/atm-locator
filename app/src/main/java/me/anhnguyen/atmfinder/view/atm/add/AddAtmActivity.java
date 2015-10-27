@@ -3,8 +3,10 @@ package me.anhnguyen.atmfinder.view.atm.add;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -14,7 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.view.RxMenuItem;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.trello.rxlifecycle.ActivityEvent;
 
@@ -37,8 +39,6 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
     EditText nameEditText;
     @Bind(R.id.edit_text_address)
     EditText addressEditText;
-    @Bind(R.id.save_fab)
-    FloatingActionButton addAtmFab;
 
     @Inject
     AddAtmViewModel addAtmViewModel;
@@ -66,6 +66,35 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_atm, menu);
+
+        MenuItem addMenu = menu.findItem(R.id.action_add);
+
+        RxMenuItem.clicks(addMenu)
+                .subscribe(aVoid -> addAtmViewModel.add());
+
+        addAtmViewModel.canSave()
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe(RxMenuItem.enabled(addMenu));
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                addAtmViewModel.add();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -116,14 +145,6 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
                         hideProgress();
                     }
                 });
-
-        addAtmViewModel.canSave()
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(canSave -> addAtmFab.setClickable(canSave));
-
-        RxView.clicks(addAtmFab)
-                .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(o -> addAtmViewModel.add());
 
         addAtmViewModel.done()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
