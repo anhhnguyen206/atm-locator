@@ -81,6 +81,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_atm_finder);
+        getActivityComponent().inject(this);
         init();
     }
 

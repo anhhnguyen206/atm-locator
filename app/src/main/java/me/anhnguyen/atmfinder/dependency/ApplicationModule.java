@@ -17,9 +17,7 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 /**
  * Created by nguyenhoanganh on 10/18/15.
  */
-@Module(
-        library = true
-)
+@Module
 public class ApplicationModule {
     private Context context;
 

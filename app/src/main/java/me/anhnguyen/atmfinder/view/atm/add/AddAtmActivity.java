@@ -61,6 +61,8 @@ public class AddAtmActivity extends LocationBasedActivitiy implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atm);
 
+        getActivityComponent().inject(this);
+
         showProgress(getString(R.string.loading));
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

@@ -2,26 +2,25 @@ package me.anhnguyen.atmfinder;
 
 import android.app.Application;
 
-import dagger.ObjectGraph;
+import me.anhnguyen.atmfinder.dependency.ApplicationComponent;
 import me.anhnguyen.atmfinder.dependency.ApplicationModule;
+import me.anhnguyen.atmfinder.dependency.DaggerApplicationComponent;
 
 /**
  * Created by nguyenhoanganh on 10/18/15.
  */
 public class AtmFinderApplication extends Application {
-    private ObjectGraph objectGraph;
+    private ApplicationComponent applicationComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        objectGraph = ObjectGraph.create(new ApplicationModule(this));
+        applicationComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
     }
 
-    public void inject(Object object) {
-        objectGraph.inject(object);
-    }
-
-    public ObjectGraph getApplicationGraph() {
-        return objectGraph;
+    public ApplicationComponent component() {
+        return applicationComponent;
     }
 }
