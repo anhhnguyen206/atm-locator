@@ -31,13 +31,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             app:backgroundTint="@android:color/holo_blue_dark"
-            android:src="@drawable/ic_my_location_white_24dp"/>
+            android:src="@android:drawable/ic_menu_mylocation"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_atm_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_note_add_white_24dp"/>
+            android:src="@android:drawable/ic_menu_add"/>
     </LinearLayout>
 
 

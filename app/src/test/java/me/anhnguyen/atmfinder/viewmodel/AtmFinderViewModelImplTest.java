@@ -167,7 +167,7 @@ public class AtmFinderViewModelImplTest extends AbstractDaoTestLongPk<AtmDao, At
         atmFinderViewModel.search();
         testSubscriber.assertNoErrors();
         testSubscriber.assertValueCount(2);
-        assertEquals(4, testSubscriber.getOnNextEvents().get(1).size());
+        assertEquals(3, testSubscriber.getOnNextEvents().get(1).size());
     }
 
     @Test
