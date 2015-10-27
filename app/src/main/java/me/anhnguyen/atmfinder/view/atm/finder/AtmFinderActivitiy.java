@@ -182,7 +182,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
 
         RxView.clicks(myLocationFab)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribe(o -> getCurrentLocationAndMoveMap());
+                .subscribe(o -> getCurrentLocationAndMoveMap(true));
 
     }
 
@@ -227,10 +227,10 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
         map.setOnCameraChangeListener(this);
         map.getUiSettings().setMapToolbarEnabled(false);
         bindViewModel();
-        getCurrentLocationAndMoveMap();
+        getCurrentLocationAndMoveMap(false);
     }
 
-    private void getCurrentLocationAndMoveMap() {
+    private void getCurrentLocationAndMoveMap(boolean animate) {
         if (locationPermissionGranted()) {
             currentLocation()
                     .compose(bindUntilEvent(ActivityEvent.DESTROY))
@@ -238,7 +238,11 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                     .observeOn(schedulerUi)
                     .subscribe(location -> {
                         atmFinderViewModel.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                        if (animate) {
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                        } else {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
+                        }
                     });
 
         } else {
@@ -246,11 +250,15 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                     .compose(bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribe(permission -> {
                         if (permission.granted) {
-                            getCurrentLocationAndMoveMap();
+                            getCurrentLocationAndMoveMap(animate);
                         } else {
                             showToast(getString(R.string.location_permission_not_granted));
                             LatLng latLng = LocationUtils.defaultLatLng();
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            if (animate) {
+                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            } else {
+                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                            }
                         }
                     });
         }
