@@ -229,4 +229,9 @@ public class LocationUtilsTest {
     public void convertCenterAndRadiusToBoundsShouldReturnLatLngBounds() {
         assertNotNull(LocationUtils.convertCenterAndRadiusToBounds(LocationUtils.defaultLatLng(), 5000));
     }
+
+    @Test
+    public void testLocationUtilsConstructor() {
+        assertNotNull(new LocationUtils());
+    }
 }

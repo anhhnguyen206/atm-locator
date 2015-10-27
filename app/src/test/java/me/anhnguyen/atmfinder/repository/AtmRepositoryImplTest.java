@@ -74,10 +74,11 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
 
         // approximately 10 km center
         List<Atm> nearbyAtms = atmRepository.findNearbyAtms("", currentLat, currentLon, 10000);
-        assertEquals(3, nearbyAtms.size());
+        assertEquals(4, nearbyAtms.size());
         assertEquals(Long.valueOf(1l), nearbyAtms.get(0).getId());
         assertEquals(Long.valueOf(3l), nearbyAtms.get(1).getId());
-        assertEquals(Long.valueOf(2l), nearbyAtms.get(2).getId());
+        assertEquals(Long.valueOf(4l), nearbyAtms.get(2).getId());
+        assertEquals(Long.valueOf(2l), nearbyAtms.get(3).getId());
     }
 
     @Test
