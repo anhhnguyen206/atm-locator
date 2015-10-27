@@ -103,6 +103,17 @@ public class AtmRepositoryImplTest extends AbstractDaoTestLongPk<AtmDao, Atm> {
         assertEquals(0, nearbyAtms.size());
     }
 
+    @Test
+    public void atmNearbyThatIsNotActuallyInTheSearchRangeShouldNotBeFound() {
+        // at 147 Ton Dat Tien
+        double currentLat = 10.723472955145452;
+        double currentLon = 106.69874332845211;
+
+        // approximately 5 km center
+        List<Atm> nearbyAtms = atmRepository.findNearbyAtms("", currentLat, currentLon, 5000);
+        assertEquals(0, nearbyAtms.size());
+    }
+
     private void createAtmListNearbySearch() {
         AtmRepositoryTestHelper atmRepositoryTestHelper = new AtmRepositoryTestHelper(dao);
         atmRepositoryTestHelper.createAtmListNearbySearch();
