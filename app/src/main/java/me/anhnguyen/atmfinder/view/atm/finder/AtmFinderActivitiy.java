@@ -39,6 +39,7 @@ import me.anhnguyen.atmfinder.common.LocationUtils;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerIo;
 import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
+import me.anhnguyen.atmfinder.model.wrapper.ProjectionWrapper;
 import me.anhnguyen.atmfinder.view.atm.add.AddAtmActivity;
 import me.anhnguyen.atmfinder.view.base.LocationBasedActivitiy;
 import me.anhnguyen.atmfinder.view.misc.SearchRadiusView;
@@ -140,7 +141,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(should -> {
                     if (should) {
-                        float radius = LocationUtils.metersToEquatorPixels(map.getProjection(),
+                        float radius = LocationUtils.metersToPixels(
+                                new ProjectionWrapper(map.getProjection()),
                                 map.getCameraPosition().target,
                                 (float) atmFinderViewModel.getRange());
                         searchRadiusView.setRadius(radius);

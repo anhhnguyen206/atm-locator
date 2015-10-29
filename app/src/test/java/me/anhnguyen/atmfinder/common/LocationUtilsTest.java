@@ -1,5 +1,6 @@
 package me.anhnguyen.atmfinder.common;
 
+import android.graphics.Point;
 import android.location.Address;
 import android.location.Location;
 
@@ -13,6 +14,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import me.anhnguyen.atmfinder.BuildConfig;
+import me.anhnguyen.atmfinder.model.wrapper.ProjectionWrapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -228,6 +230,14 @@ public class LocationUtilsTest {
     @Test
     public void convertCenterAndRadiusToBoundsShouldReturnLatLngBounds() {
         assertNotNull(LocationUtils.convertCenterAndRadiusToBounds(LocationUtils.defaultLatLng(), 5000));
+    }
+
+    @Test
+    public void metersToPixelsShouldReturnValue() {
+        ProjectionWrapper projectionWrapper = Mockito.mock(ProjectionWrapper.class);
+        Mockito.when(projectionWrapper.toScreenLocation(Mockito.any()))
+                .thenReturn(new Point(1, 1));
+        assertNotNull(LocationUtils.metersToPixels(projectionWrapper, LocationUtils.defaultLatLng(), 5000));
     }
 
     @Test
