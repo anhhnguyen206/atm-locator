@@ -18,7 +18,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -42,6 +41,7 @@ import me.anhnguyen.atmfinder.dependency.annotation.ForSchedulerUi;
 import me.anhnguyen.atmfinder.model.dao.Atm;
 import me.anhnguyen.atmfinder.view.atm.add.AddAtmActivity;
 import me.anhnguyen.atmfinder.view.base.LocationBasedActivitiy;
+import me.anhnguyen.atmfinder.view.misc.SearchRadiusView;
 import me.anhnguyen.atmfinder.viewmodel.atm.finder.AtmFinderViewModel;
 import rx.Scheduler;
 
@@ -65,6 +65,8 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
     FloatingActionButton addAtmFab;
     @Bind(R.id.my_location_fab)
     FloatingActionButton myLocationFab;
+    @Bind(R.id.search_radius)
+    SearchRadiusView searchRadiusView;
 
     @Inject
     AtmFinderViewModel atmFinderViewModel;
@@ -122,6 +124,7 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
         // bind address changes when latlng changes
         atmFinderViewModel.latLng()
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                .debounce(400, TimeUnit.MILLISECONDS)
                 .flatMap(latLng -> reverseGeocode(latLng.latitude, latLng.longitude, 1))
                 .subscribeOn(schedulerIo)
                 .observeOn(schedulerUi)
@@ -136,16 +139,11 @@ public class AtmFinderActivitiy extends LocationBasedActivitiy implements OnMapR
                 .observeOn(schedulerUi)
                 .compose(bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribe(should -> {
-                    if (searchCircle != null) {
-                        searchCircle.setCenter(atmFinderViewModel.getLatLng());
-                        searchCircle.setRadius(atmFinderViewModel.getRange());
-                    } else {
-                        CircleOptions circleOptions = new CircleOptions()
-                                .center(atmFinderViewModel.getLatLng())
-                                .radius(atmFinderViewModel.getRange())
-                                .strokeColor(getResources().getColor(R.color.colorPrimary));
-
-                        searchCircle = map.addCircle(circleOptions);
+                    if (should) {
+                        float radius = LocationUtils.metersToEquatorPixels(map.getProjection(),
+                                map.getCameraPosition().target,
+                                (float) atmFinderViewModel.getRange());
+                        searchRadiusView.setRadius(radius);
                     }
                 });
 

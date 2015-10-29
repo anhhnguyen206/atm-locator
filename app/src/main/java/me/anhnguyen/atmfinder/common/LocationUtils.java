@@ -1,9 +1,11 @@
 package me.anhnguyen.atmfinder.common;
 
+import android.graphics.Point;
 import android.location.Address;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
@@ -66,5 +68,15 @@ public class LocationUtils {
         LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
         LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
         return new LatLngBounds(southwest, northeast);
+    }
+
+    public static int metersToEquatorPixels(Projection projection, LatLng base, float meters) {
+        // calculate south west point on the circle
+        LatLng southwest = SphericalUtil.computeOffset(base, meters * Math.sqrt(2.0), 225);
+
+        Point basePt = projection.toScreenLocation(base);
+        Point destPt = projection.toScreenLocation(southwest);
+
+        return Math.abs(destPt.x - basePt.x);
     }
 }
